@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JEMCODES — Attendance System</title>
+<style>
+:root{
+  --bg:#0b1220;
+  --bg2:#101a2e;
+  --card:#121c31;
+  --card2:#16233d;
+  --text:#e9eefc;
+  --muted:#9aa7c0;
+  --line:#243553;
+  --primary:#6d8cff;
+  --primary2:#4f73ff;
+  --success:#32c58a;
+  --success2:#1c8d61;
+  --danger:#ff6b7a;
+  --danger2:#d74e5d;
+  --warning:#ffcb62;
+  --shadow:0 18px 50px rgba(0,0,0,.25);
+  --radius:18px;
+  --radius-sm:12px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  font:15px/1.5 Inter,Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(109,140,255,.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(50,197,138,.12), transparent 28%),
+    linear-gradient(180deg,var(--bg),var(--bg2));
+}
+button,input,select,textarea{font:inherit}
+button{border:0;cursor:pointer}
+button:hover{filter:brightness(1.05)}
+button:disabled{opacity:.55;cursor:not-allowed}
+input,select,textarea{outline:none}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.full{width:100%}
+.nowrap{white-space:nowrap}
+a{color:inherit}
+
+.brand{
+  font-size:30px;
+  font-weight:950;
+  letter-spacing:-1.5px;
+  line-height:1;
+}
+.brand span{color:var(--primary)}
+.tagline{color:var(--muted);margin:.4rem 0 0}
+
+.btn{
+  min-height:44px;
+  padding:11px 15px;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-weight:850;
+}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-secondary{background:#1a2742;color:var(--text);border:1px solid var(--line)}
+.btn-success{background:rgba(50,197,138,.14);color:#9bf3cc;border:1px solid rgba(50,197,138,.25)}
+.btn-danger{background:rgba(255,107,122,.14);color:#ffb8bf;border:1px solid rgba(255,107,122,.28)}
+.btn-warning{background:rgba(255,203,98,.14);color:#ffe0a1;border:1px solid rgba(255,203,98,.24)}
+.btn-neutral{background:#202c46;color:var(--text);border:1px solid var(--line)}
+.btn-sm{min-height:34px;padding:7px 10px;font-size:12px}
+.btn-chip{border-radius:999px;padding:7px 11px}
+
+.auth-wrap{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+.auth-card{
+  width:min(640px,100%);
+  background:linear-gradient(180deg, rgba(18,28,49,.98), rgba(13,20,37,.98));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:32px;
+}
+.auth-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:18px;
+}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 11px;border-radius:999px;
+  background:#1b2742;border:1px solid var(--line);
+  color:var(--text);font-size:12px;font-weight:800
+}
+.seg{
+  display:flex;
+  gap:8px;
+  margin:18px 0 10px;
+  background:#10192c;
+  padding:6px;
+  border-radius:14px;
+  border:1px solid var(--line);
+}
+.seg button{
+  flex:1;
+  background:transparent;
+  color:var(--muted);
+  padding:11px 12px;
+  border-radius:10px;
+  font-weight:900;
+}
+.seg button.active{
+  background:linear-gradient(180deg,var(--primary),var(--primary2));
+  color:#fff;
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin:12px 0}
+.field label{
+  display:block;
+  margin:0 0 7px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.25px;
+}
+.control{
+  width:100%;
+  padding:13px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#0f182b;
+  color:var(--text);
+}
+.control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(109,140,255,.12)}
+textarea.control{min-height:110px;resize:vertical}
+.helper{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+.err{
+  min-height:18px;
+  margin-top:8px;
+  color:#ff9ba4;
+  font-size:13px;
+  font-weight:800;
+}
+.notice{
+  padding:13px 14px;
+  border-radius:12px;
+  background:rgba(109,140,255,.12);
+  border:1px solid rgba(109,140,255,.18);
+  color:#cdd8ff;
+  font-size:13px;
+}
+.notice.good{
+  background:rgba(50,197,138,.12);
+  border-color:rgba(50,197,138,.2);
+  color:#b8f3d9;
+}
+
+.topbar{
+  height:72px;
+  position:sticky;
+  top:0;
+  z-index:40;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 24px;
+  background:rgba(12,18,32,.86);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.userbox{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(180deg,var(--primary),var(--primary2));
+  color:#fff;font-weight:950;
+}
+.layout{
+  min-height:calc(100vh - 72px);
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr);
+}
+.sidebar{
+  background:rgba(16,26,46,.92);
+  border-right:1px solid rgba(255,255,255,.07);
+  padding:16px 12px;
+}
+.side-title{
+  padding:10px;
+  color:#7f8ba5;
+  font-size:10px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+.nav{
+  width:100%;
+  text-align:left;
+  padding:11px 12px;
+  margin:3px 0;
+  border-radius:12px;
+  background:transparent;
+  color:#b5c0d8;
+  font-weight:800;
+}
+.nav:hover,.nav.active{
+  background:#1a2742;
+  color:#fff;
+}
+.nav-badge{
+  float:right;
+  padding:4px 7px;
+  border-radius:999px;
+  background:rgba(255,107,122,.14);
+  color:#ffb8bf;
+  font-size:10px;
+  font-weight:900;
+}
+.main{
+  max-width:1500px;
+  width:100%;
+  margin:0 auto;
+  padding:28px;
+}
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:22px;
+}
+.page-head h1{
+  margin:0 0 6px;
+  font-size:30px;
+  line-height:1.15;
+}
+.page-head p{margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.card{
+  background:linear-gradient(180deg, rgba(20,31,54,.95), rgba(18,28,49,.95));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.section{padding:20px;margin-top:18px}
+.section h2{margin:0 0 14px;font-size:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{padding:18px}
+.stat small{display:block;color:var(--muted);font-weight:800}
+.stat b{display:block;font-size:30px;margin-top:4px}
+.stat span{display:block;font-size:11px;color:var(--muted)}
+
+.room{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding:18px;
+  margin-bottom:10px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#111b30;
+}
+.room:last-child{margin-bottom:0}
+.room-name{font-size:17px;font-weight:950}
+.room-desc{color:var(--muted);font-size:12px;margin-top:3px}
+.room-code{
+  font-size:22px;
+  letter-spacing:4px;
+  font-weight:1000;
+  color:#dbe4ff;
+}
+.room-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:900;
+}
+.badge-present,.badge-joined,.badge-active,.badge-exempted,.badge-approved{
+  color:#bff8d8;
+  background:rgba(50,197,138,.14);
+}
+.badge-absent,.badge-declined,.badge-closed{
+  color:#ffb8bf;
+  background:rgba(255,107,122,.14);
+}
+.badge-pending{color:#dbe4ff;background:rgba(109,140,255,.14)}
+.badge-not{color:#d6dce7;background:rgba(255,255,255,.06)}
+
+.table-wrap{overflow:auto}
+.table{
+  width:100%;
+  min-width:720px;
+  border-collapse:collapse;
+}
+.table th{
+  text-align:left;
+  padding:12px 10px;
+  color:#8290ab;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.table td{
+  padding:13px 10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+  vertical-align:middle;
+}
+.table tr:hover td{background:rgba(255,255,255,.03)}
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:34px 16px;
+}
+.empty b{display:block;color:var(--text);margin-top:5px}
+.filters{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px
+}
+.search{max-width:380px}
+.tabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:16px;
+}
+.tab{
+  padding:10px 13px;
+  background:transparent;
+  color:var(--muted);
+  font-weight:900;
+  border-radius:12px 12px 0 0;
+}
+.tab.active{
+  color:#fff;
+  background:#1a2742;
+  border-bottom:2px solid var(--primary);
+}
+.info,.warn,.good{
+  padding:13px 14px;
+  border-radius:12px;
+  font-size:13px;
+  line-height:1.6;
+}
+.info{background:rgba(109,140,255,.12);border:1px solid rgba(109,140,255,.18);color:#dbe4ff}
+.warn{background:rgba(255,203,98,.12);border:1px solid rgba(255,203,98,.18);color:#ffe0a1}
+.good{background:rgba(50,197,138,.12);border:1px solid rgba(50,197,138,.18);color:#bff8d8}
+.progress{
+  height:8px;
+  background:#1a2742;
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress > i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--primary),var(--success));
+}
+.timeline{position:relative;padding-left:24px}
+.timeline:before{
+  content:"";
+  position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:#26365a;
+}
+.event{position:relative;padding:0 0 16px}
+.event:before{
+  content:"";
+  position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;
+  background:var(--primary);
+  border:3px solid #1a2742;
+}
+.event b{font-size:13px}
+.event small{display:block;color:var(--muted);margin-top:3px}
+
+.modal{
+  position:fixed;inset:0;z-index:100;
+  display:grid;place-items:center;
+  padding:20px;
+  background:rgba(2,7,18,.72);
+}
+.modal-box{
+  width:min(720px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:24px;
+  background:linear-gradient(180deg,#121c31,#0f1729);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.modal-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px
+}
+.modal-head h2{margin:0}
+.close{width:34px;height:34px;border-radius:50%;background:#1f2a44;color:var(--text)}
+.toast{
+  position:fixed;
+  right:20px;bottom:20px;z-index:200;
+  padding:13px 16px;
+  background:#09111f;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  max-width:360px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.code-large{
+  font-size:44px;
+  letter-spacing:8px;
+  font-weight:1000;
+  text-align:center;
+  padding:18px;
+  border-radius:16px;
+  background:#0f182b;
+  border:1px solid var(--line);
+  color:#dbe4ff;
+}
+.avatar-lg{
+  width:64px;height:64px;border-radius:18px;
+  display:grid;place-items:center;
+  background:#0f182b;
+  color:#dbe4ff;
+  font-size:22px;font-weight:1000;
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wide{grid-column:1/-1}
+hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:18px 0}
+.small-muted{font-size:12px;color:var(--muted)}
+@media(max-width:980px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{
+    display:flex;overflow:auto;gap:4px;padding:8px;
+    position:sticky;top:72px;z-index:30;
+  }
+  .side-title{display:none}
+  .nav{white-space:nowrap;width:auto}
+  .main{padding:16px}
+  .page-head{flex-direction:column}
+  .room{align-items:flex-start;flex-direction:column}
+  .room-actions{justify-content:flex-start}
+  .grid-4,.grid-3,.grid-2,.form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modalRoot" class="hidden"></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* =========================================================
+   JEMCODES V2: clean auth + class storage + GitHub Pages
+   =========================================================
+   This is still a static-site prototype. Data is saved in
+   the browser (localStorage/sessionStorage), so users on
+   different devices will NOT automatically share data.
+   ========================================================= */
+
+const DB_KEY = "jemcodes_db_v2";
+const SESSION_KEY = "jemcodes_session_v2";
+const DEFAULT_DB = {
+  accounts: [],
+  rooms: [],
+  attendance: [],
+  requests: [],
+  reports: [],
+  notifications: [],
+  audit: [],
+  settings: { theme: "dark", appName: "JEMCODES" }
+};
+
+let db = loadDB();
+let session = loadSession();
+let authMode = "signin"; // signin = create account, login = existing account
+let page = "dashboard";
+let activeRoomId = null;
+let toastTimer = null;
+
+/* ---------- storage ---------- */
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return structuredClone(DEFAULT_DB);
+    const parsed = JSON.parse(raw);
+    return {
+      ...structuredClone(DEFAULT_DB),
+      ...parsed,
+      settings: { ...structuredClone(DEFAULT_DB.settings), ...(parsed.settings || {}) }
+    };
+  } catch {
+    return structuredClone(DEFAULT_DB);
+  }
+}
+function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+function loadSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); }
+  catch { return null; }
+}
+function saveSession() {
+  if (session) sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  else sessionStorage.removeItem(SESSION_KEY);
+}
+
+/* ---------- helpers ---------- */
+function uid(prefix="id") { return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,9)}`; }
+function now() { return new Date().toISOString(); }
+function fmt(v) { return v ? new Date(v).toLocaleString() : "—"; }
+function esc(v) { return String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+function roleLabel(r) { return ({student:"Student", worker:"Worker", teacher:"Teacher", boss:"Boss"}[r] || r || "User"); }
+function roleIcon(r) { return ({student:"🎓", worker:"🧰", teacher:"📚", boss:"🏢"}[r] || "👤"); }
+function initials(name) { return String(name || "U").split(" ").filter(Boolean).slice(0,2).map(x => x[0]).join("").toUpperCase(); }
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add("hidden"), 3000);
+}
+function openModal(title, body) {
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="modal" onclick="closeModalBg(event)">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h2>${esc(title)}</h2>
+          <button class="close" onclick="closeModal()">×</button>
+        </div>
+        ${body}
+      </div>
+    </div>`;
+  document.getElementById("modalRoot").classList.remove("hidden");
+}
+function closeModal() {
+  const root = document.getElementById("modalRoot");
+  root.classList.add("hidden");
+  root.innerHTML = "";
+}
+function closeModalBg(e){ if (e.target.classList.contains("modal")) closeModal(); }
+function badge(status) {
+  const s = String(status || "Not Marked");
+  const key = s.toLowerCase().replace(/\s+/g, "-");
+  let cls = "badge-not";
+  if (["present","joined","active","approved","exempted"].includes(key)) cls = key === "present" ? "badge-present" : key === "joined" ? "badge-joined" : key === "active" ? "badge-joined" : "badge-exempted";
+  if (["absent","declined","closed"].includes(key)) cls = "badge-absent";
+  if (key === "pending") cls = "badge-pending";
+  return `<span class="badge ${cls}">${esc(s)}</span>`;
+}
+function me(){ return session ? db.accounts.find(a => a.id === session.accountId) || null : null; }
+function roomById(id){ return db.rooms.find(r => r.id === id) || null; }
+function roomByCode(code){ return db.rooms.find(r => r.code === String(code).trim()) || null; }
+function memberAttendance(roomId, accountId){ return db.attendance.find(a => a.roomId === roomId && a.accountId === accountId) || null; }
+function pendingRequest(roomId, accountId){ return db.requests.find(r => r.roomId === roomId && r.accountId === accountId && r.status === "pending") || null; }
+function isManager(){ const a = me(); return a && (a.role === "teacher" || a.role === "boss"); }
+function getRoomMembers(room){ return room.members.map(id => db.accounts.find(a => a.id === id)).filter(Boolean); }
+function roomCode(){ let c; do { c = String(Math.floor(100000 + Math.random() * 900000)); } while (db.rooms.some(r => r.code === c)); return c; }
+function log(action, detail) {
+  db.audit.push({ id: uid("log"), accountId: me()?.id || null, action, detail, createdAt: now() });
+  saveDB();
+}
+function notify(accountId, title, message) {
+  db.notifications.push({ id: uid("note"), accountId, title, message, read: false, createdAt: now() });
+  saveDB();
+}
+function statCard(label, value, sub) {
+  return `<div class="card stat"><small>${esc(label)}</small><b>${esc(value)}</b><span>${esc(sub)}</span></div>`;
+}
+function emptyState(icon, title, msg) {
+  return `<div class="empty"><div style="font-size:30px">${icon}</div><b>${esc(title)}</b><div>${esc(msg)}</div></div>`;
+}
+function progress(percent){
+  return `<div class="progress"><i style="width:${Math.max(0,Math.min(100,percent))}%"></i></div>`;
+}
+
+/* ---------- auth ---------- */
+function renderAuth(){
+  const mode = authMode;
+  document.getElementById("app").innerHTML = `
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-top">
+          <div>
+            <div class="brand">JEM<span>CODES</span></div>
+            <div class="tagline">Attendance, class codes, approvals, and saved records.</div>
+          </div>
+          <div class="pill-row">
+            <span class="pill">Dark theme</span>
+            <span class="pill">GitHub Pages</span>
+            <span class="pill">Local storage</span>
+          </div>
+        </div>
+
+        <div class="seg">
+          <button class="${mode === "signin" ? "active" : ""}" onclick="setAuthMode('signin')">Sign In</button>
+          <button class="${mode === "login" ? "active" : ""}" onclick="setAuthMode('login')">Log In</button>
+        </div>
+
+        <div class="notice ${mode === "signin" ? "good" : ""}">
+          ${mode === "signin"
+            ? "Sign In creates a new account if the username does not exist."
+            : "Log In uses an existing saved account."}
+        </div>
+
+        <form onsubmit="${mode === "signin" ? "handleSignin(event)" : "handleLogin(event)"}" autocomplete="on">
+          <div class="form-grid">
+            <div class="wide field">
+              <label>FULL NAME</label>
+              <input id="fullName" class="control" placeholder="Enter your full name" required />
+            </div>
+
+            <div class="field">
+              <label>USERNAME</label>
+              <input id="username" class="control" autocomplete="username" placeholder="Choose your username" required />
+            </div>
+
+            <div class="field">
+              <label>PASSWORD</label>
+              <input id="password" class="control" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+            </div>
+
+            <div class="wide field">
+              <label>ACCOUNT CATEGORY</label>
+              <select id="role" class="control" required>
+                <option value="">Select category</option>
+                <option value="student">Student</option>
+                <option value="worker">Worker</option>
+                <option value="teacher">Teacher</option>
+                <option value="boss">Boss</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary full" type="submit">
+            ${mode === "signin" ? "Sign In / Create Account" : "Log In"}
+          </button>
+          <div id="authError" class="err"></div>
+        </form>
+
+        <div class="help">
+          <b>Important:</b> accounts, rooms, attendance, and requests are saved in this browser on GitHub Pages.
+          If you open the site on another phone or another browser, it will not see the same storage unless you add a backend later.
+        </div>
+      </div>
+    </div>
+  `;
+}
+function setAuthMode(mode){
+  authMode = mode;
+  renderAuth();
+}
+function handleSignin(e){
+  e.preventDefault();
+  const fullName = document.getElementById("fullName").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
+  const err = document.getElementById("authError");
+  err.textContent = "";
+
+  if (fullName.length < 2) return err.textContent = "Enter your full name.";
+  if (username.length < 3) return err.textContent = "Username must be at least 3 characters.";
+  if (password.length < 4) return err.textContent = "Password must be at least 4 characters.";
+  if (!role) return err.textContent = "Select your account category.";
+
+  let account = db.accounts.find(a => a.username.toLowerCase() === username.toLowerCase());
+  if (account){
+    if (account.password !== password) return err.textContent = "Password does not match this account.";
+    if (account.role !== role) return err.textContent = "Account category does not match this username.";
+    account.fullName = fullName;
+    account.lastLogin = now();
+  } else {
+    account = { id: uid("acct"), fullName, username, password, role, createdAt: now(), lastLogin: now() };
+    db.accounts.push(account);
+  }
+
+  session = { accountId: account.id, createdAt: now() };
+  saveDB(); saveSession();
+  log("AUTH_SIGNIN", `${account.username} signed in / created account`);
+  page = "dashboard";
+  activeRoomId = null;
+  renderApp();
+  toast(`Welcome to JEMCODES, ${account.fullName}!`);
+}
+function handleLogin(e){
+  e.preventDefault();
+  const fullName = document.getElementById("fullName").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
+  const err = document.getElementById("authError");
+  err.textContent = "";
+
+  if (!username || !password || !role) return err.textContent = "Enter your username, password, and category.";
+  const account = db.accounts.find(a => a.username.toLowerCase() === username.toLowerCase());
+  if (!account) return err.textContent = "Account not found. Use Sign In to create it first.";
+  if (account.password !== password) return err.textContent = "Incorrect password.";
+  if (account.role !== role) return err.textContent = "Account category does not match.";
+  if (fullName && fullName.trim().length >= 2) account.fullName = fullName.trim();
+
+  account.lastLogin = now();
+  session = { accountId: account.id, createdAt: now() };
+  saveDB(); saveSession();
+  log("AUTH_LOGIN", `${account.username} logged in`);
+  page = "dashboard";
+  activeRoomId = null;
+  renderApp();
+  toast(`Logged in as ${account.fullName}.`);
+}
+function logout(){
+  const a = me();
+  if (a) log("AUTH_LOGOUT", `${a.username} logged out`);
+  session = null;
+  activeRoomId = null;
+  saveSession();
+  renderAuth();
+}
+
+/* ---------- app shell ---------- */
+function renderApp(){
+  const a = me();
+  if (!a){ renderAuth(); return; }
+
+  const unread = db.notifications.filter(n => n.accountId === a.id && !n.read).length;
+  document.getElementById("app").innerHTML = `
+    <header class="topbar">
+      <div class="brand">JEM<span>CODES</span></div>
+      <div class="userbox">
+        <div style="text-align:right">
+          <div style="font-weight:900;font-size:13px">${esc(a.fullName)}</div>
+          <div class="muted" style="font-size:11px">${roleLabel(a.role)}</div>
+        </div>
+        <div class="avatar">${esc(initials(a.fullName))}</div>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">${renderSidebar(unread)}</aside>
+      <main id="main" class="main"></main>
+    </div>
+  `;
+  go(page);
+}
+
+function renderSidebar(unread){
+  const items = [];
+  items.push(`<button class="nav" data-page="dashboard" onclick="go('dashboard')">⌂ Dashboard</button>`);
+  if (isManager()){
+    items.push(`<button class="nav" data-page="rooms" onclick="go('rooms')">▣ My Rooms</button>`);
+    items.push(`<button class="nav" data-page="members" onclick="go('members')">♟ Members</button>`);
+    items.push(`<button class="nav" data-page="requests" onclick="go('requests')">! Request Center</button>`);
+    items.push(`<button class="nav" data-page="attendance" onclick="go('attendance')">✓ Attendance</button>`);
+    items.push(`<button class="nav" data-page="reports" onclick="go('reports')">▤ Reports</button>`);
+  } else {
+    items.push(`<button class="nav" data-page="join" onclick="go('join')">＋ Join a Room</button>`);
+    items.push(`<button class="nav" data-page="attendance" onclick="go('attendance')">✓ My Attendance</button>`);
+    items.push(`<button class="nav" data-page="requests" onclick="go('requests')">! My Requests</button>`);
+  }
+  items.push(`<button class="nav" data-page="notifications" onclick="go('notifications')">● Notifications ${unread ? `<span class="nav-badge">${unread}</span>` : ""}</button>`);
+  items.push(`<button class="nav" data-page="settings" onclick="go('settings')">⚙ Settings</button>`);
+  items.push(`<button class="nav" data-page="security" onclick="go('security')">🔐 Security</button>`);
+  items.push(`<button class="nav" data-page="backup" onclick="go('backup')">⬇ Backup</button>`);
+  items.push(`<button class="nav" onclick="logout()">↪ Log Out</button>`);
+  return `
+    <div class="side-title">Main Menu</div>
+    ${items.join("")}
+  `;
+}
+
+function go(p){
+  page = p;
+  document.querySelectorAll(".nav").forEach(btn => btn.classList.toggle("active", btn.dataset.page === p));
+  const a = me();
+  if (!a){ renderAuth(); return; }
+  if (p === "dashboard") return isManager() ? renderManagerDashboard() : renderUserDashboard();
+  if (p === "rooms") return isManager() ? renderRooms() : renderUserDashboard();
+  if (p === "members") return renderMembers();
+  if (p === "requests") return isManager() ? renderManagerRequests() : renderMyRequests();
+  if (p === "attendance") return isManager() ? renderManagerAttendance() : renderMyAttendance();
+  if (p === "reports") return renderReports();
+  if (p === "join") return renderJoinRoom();
+  if (p === "notifications") return renderNotifications();
+  if (p === "settings") return renderSettings();
+  if (p === "security") return renderSecurity();
+  if (p === "backup") return renderBackupPage();
+}
+
+/* ---------- dashboard ---------- */
+function renderManagerDashboard(){
+  const a = me();
+  const rooms = db.rooms.filter(r => r.ownerId === a.id);
+  const roomIds = rooms.map(r => r.id);
+  const members = [...new Set(rooms.flatMap(r => r.members))];
+  const rows = db.attendance.filter(x => roomIds.includes(x.roomId));
+  const pending = db.requests.filter(x => roomIds.includes(x.roomId) && x.status === "pending").length;
+  const completion = rows.length ? Math.round((rows.filter(x => x.status !== "not_marked").length / rows.length) * 100) : 0;
+  const logItems = db.audit.filter(x => x.accountId === a.id).slice(-8).reverse();
+
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Teacher / Boss Control Center</h1>
+        <p>Create rooms, manage attendance, and review requests.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="openRoomModal()">Quick Create Room</button>
+        <button class="btn btn-primary" onclick="go('rooms')">Open Rooms</button>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      ${statCard("Rooms", rooms.length, "Managed by you")}
+      ${statCard("Members", members.length, "People joined")}
+      ${statCard("Pending", pending, "Requests waiting")}
+      ${statCard("Completion", `${completion}%`, "Marked records")}
+    </div>
+
+    <div class="grid-2">
+      <section class="card section">
+        <h2>Attendance Health</h2>
+        <div class="small-muted">Completion rate across your rooms</div>
+        <br>
+        ${progress(completion)}
+        <div class="grid-3" style="margin-top:14px">
+          <div class="good">Present<br><b>${rows.filter(x => x.status === "present").length}</b></div>
+          <div class="warn">Absent<br><b>${rows.filter(x => x.status === "absent").length}</b></div>
+          <div class="info">Exempted<br><b>${rows.filter(x => x.status === "exempted").length}</b></div>
+        </div>
+      </section>
+
+      <section class="card section">
+        <h2>Recent Activity</h2>
+        <div class="timeline">
+          ${logItems.length ? logItems.map(x => `
+            <div class="event">
+              <b>${esc(x.action.replaceAll("_"," "))}</b>
+              <small>${esc(x.detail)} · ${fmt(x.createdAt)}</small>
+            </div>
+          `).join("") : emptyState("●","No activity yet","Your activity history will appear here.")}
+        </div>
+      </section>
+    </div>
+
+    <section class="card section">
+      <h2>Your Rooms</h2>
+      ${rooms.length ? rooms.slice(0,6).map(roomCardMini).join("") : emptyState("🏫","No rooms yet","Create your first room to begin.")}
+    </section>
+  `;
+}
+
+function renderUserDashboard(){
+  const a = me();
+  const rooms = db.rooms.filter(r => r.members.includes(a.id));
+  const req = db.requests.filter(x => x.accountId === a.id);
+  const records = db.attendance.filter(x => x.accountId === a.id);
+
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>${roleIcon(a.role)} My Attendance Panel</h1>
+        <p>Join a room with a code, mark attendance, and submit reasons if absent.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="go('join')">Join Room</button>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      ${statCard("Joined Rooms", rooms.length, "Rooms you are in")}
+      ${statCard("Present", records.filter(x => x.status === "present").length, "Marked present")}
+      ${statCard("Pending", req.filter(x => x.status === "pending").length, "Waiting review")}
+      ${statCard("Exempted", req.filter(x => x.status === "approved").length, "Approved absences")}
+    </div>
+
+    <section class="card section">
+      <h2>My Joined Rooms</h2>
+      ${rooms.length ? rooms.map(roomCardUser).join("") : emptyState("＋","No joined rooms","Use a room code to join.")}
+    </section>
+  `;
+}
+
+function roomCardMini(r){
+  return `
+    <div class="room">
+      <div>
+        <div class="room-name">${esc(r.name)}</div>
+        <div class="room-desc">${esc(r.description || "No description")} · ${r.members.length} member(s)</div>
+      </div>
+      <div class="room-actions">
+        <div class="room-code">${r.code}</div>
+        ${badge(r.active ? "Active" : "Closed")}
+        <button class="btn btn-secondary btn-sm" onclick="openRoom('${r.id}')">Manage</button>
+      </div>
+    </div>
+  `;
+}
+function roomCardUser(r){
+  const a = me();
+  const att = memberAttendance(r.id, a.id);
+  const req = pendingRequest(r.id, a.id);
+  const status = att ? att.status : req ? "pending" : "Not Marked";
+  return `
+    <div class="room">
+      <div>
+        <div class="room-name">${esc(r.name)}</div>
+        <div class="room-desc">Room code: <b>${r.code}</b></div>
+      </div>
+      <div class="room-actions">
+        ${badge(status)}
+        ${(!att || att.status === "not_marked") ? `
+          <button class="btn btn-success btn-sm" onclick="markAttendance('${r.id}','present')">Present</button>
+          <button class="btn btn-danger btn-sm" onclick="openAbsenceModal('${r.id}')">Absent</button>
+        ` : ""}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- rooms ---------- */
+function openRoomModal(){
+  openModal("Create Room", `
+    <div class="notice">
+      A unique 6-digit room code is created automatically.
+      Share that code with the class or workplace.
+    </div>
+
+    <div class="form-grid">
+      <div class="wide field">
+        <label>ROOM / CLASS / WORKPLACE NAME</label>
+        <input id="newRoomName" class="control" placeholder="Example: Grade 8 Section A">
+      </div>
+      <div class="wide field">
+        <label>DESCRIPTION</label>
+        <textarea id="newRoomDesc" class="control" placeholder="Optional description"></textarea>
+      </div>
+      <div class="field">
+        <label>VISIBILITY</label>
+        <select id="newRoomVisibility" class="control">
+          <option value="private">Code Required</option>
+          <option value="open">Open</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>DEFAULT MARK</label>
+        <select id="newRoomDefault" class="control">
+          <option value="not_marked">Not Marked</option>
+          <option value="present">Present</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="createRoom()">Create Room</button>
+      <button class="btn btn-neutral" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+}
+function createRoom(){
+  const name = document.getElementById("newRoomName").value.trim();
+  const desc = document.getElementById("newRoomDesc").value.trim();
+  const visibility = document.getElementById("newRoomVisibility").value;
+  const defaultMark = document.getElementById("newRoomDefault").value;
+  if (name.length < 2) return toast("Enter a valid room name.");
+
+  const r = {
+    id: uid("room"),
+    name,
+    description: desc,
+    code: roomCode(),
+    ownerId: me().id,
+    members: [],
+    active: true,
+    visibility,
+    defaultMark,
+    createdAt: now(),
+    updatedAt: now()
+  };
+  db.rooms.push(r);
+  log("ROOM_CREATED", name);
+  saveDB();
+  closeModal();
+  toast(`Room created. Code: ${r.code}`);
+  go("rooms");
+}
+function renderRooms(){
+  const rooms = db.rooms.filter(r => r.ownerId === me().id);
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>My Rooms</h1>
+        <p>Create, close, reopen, and manage your rooms.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="openRoomModal()">+ Create Room</button>
+      </div>
+    </div>
+    <section class="card section">
+      ${rooms.length ? rooms.map(r => `
+        <div class="room">
+          <div>
+            <div class="room-name">${esc(r.name)}</div>
+            <div class="room-desc">${esc(r.description || "No description")} · ${r.members.length} member(s)</div>
+          </div>
+          <div class="room-actions">
+            <div class="room-code">${r.code}</div>
+            ${badge(r.active ? "Active" : "Closed")}
+            <button class="btn btn-secondary btn-sm" onclick="openRoom('${r.id}')">Manage</button>
+            <button class="btn ${r.active ? "btn-danger" : "btn-success"} btn-sm" onclick="toggleRoom('${r.id}')">${r.active ? "Close" : "Reopen"}</button>
+          </div>
+        </div>
+      `).join("") : emptyState("🏫","No rooms created","Create one to start.")}
+    </section>
+  `;
+}
+function toggleRoom(roomId){
+  const r = roomById(roomId);
+  if (!r) return;
+  r.active = !r.active;
+  r.updatedAt = now();
+  log(r.active ? "ROOM_REOPENED" : "ROOM_CLOSED", r.name);
+  saveDB();
+  toast(r.active ? "Room reopened." : "Room closed.");
+  renderRooms();
+}
+function openRoom(roomId){
+  const r = roomById(roomId);
+  if (!r) return;
+  activeRoomId = roomId;
+  const members = getRoomMembers(r);
+  const rows = db.attendance.filter(x => x.roomId === roomId);
+  const req = db.requests.filter(x => x.roomId === roomId);
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>${esc(r.name)}</h1>
+        <p>${esc(r.description || "No description")} · Room code <b>${r.code}</b></p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="copyRoomCode('${r.code}')">Copy Code</button>
+        <button class="btn btn-neutral" onclick="go('rooms')">Back</button>
+      </div>
+    </div>
+
+    <div class="code-large">${r.code}</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchRoomTab(this,'roomMembersTab')">Members</button>
+      <button class="tab" onclick="switchRoomTab(this,'roomAttendanceTab')">Attendance</button>
+      <button class="tab" onclick="switchRoomTab(this,'roomRequestsTab')">Requests</button>
+      <button class="tab" onclick="switchRoomTab(this,'roomSettingsTab')">Settings</button>
+    </div>
+
+    <div id="roomMembersTab">
+      <section class="card section">
+        <div class="page-head" style="margin-bottom:12px">
+          <div>
+            <h2>Members (${members.length})</h2>
+            <div class="small-muted">Use search to find people faster.</div>
+          </div>
+          <input id="memberSearch" class="control search" oninput="filterRoomMembers()" placeholder="Search members..." />
+        </div>
+
+        ${members.length ? `
+          <div class="table-wrap">
+            <table class="table" id="roomMemberTable">
+              <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead>
+              <tbody>
+                ${members.map(m => {
+                  const att = rows.find(x => x.accountId === m.id);
+                  const joined = db.audit.find(x => x.accountId === m.id && x.action === "MEMBER_JOINED" && x.detail.includes(r.name));
+                  return `<tr>
+                    <td><b>${esc(m.fullName)}</b></td>
+                    <td>${esc(m.username)}</td>
+                    <td>${roleLabel(m.role)}</td>
+                    <td>${badge(att ? att.status : "Not Marked")}</td>
+                    <td>${fmt(joined?.createdAt || r.createdAt)}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removeMember('${r.id}','${m.id}')">Remove</button></td>
+                  </tr>`;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : emptyState("♟","No members yet","Share the code with students or workers.")}
+      </section>
+    </div>
+
+    <div id="roomAttendanceTab" class="hidden">
+      <section class="card section">
+        ${renderBulkAttendance(r.id)}
+      </section>
+    </div>
+
+    <div id="roomRequestsTab" class="hidden">
+      <section class="card section">
+        <h2>Absence Requests</h2>
+        ${renderRequestTable(req)}
+      </section>
+    </div>
+
+    <div id="roomSettingsTab" class="hidden">
+      <section class="card section">
+        ${renderRoomSettings(r)}
+      </section>
+    </div>
+  `;
+}
+function switchRoomTab(btn, idName){
+  document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+  btn.classList.add("active");
+  ["roomMembersTab","roomAttendanceTab","roomRequestsTab","roomSettingsTab"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle("hidden", id !== idName);
+  });
+}
+function copyRoomCode(code){
+  if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => toast("Room code copied!")).catch(() => toast(`Room code: ${code}`));
+  else toast(`Room code: ${code}`);
+}
+function filterRoomMembers(){
+  const q = document.getElementById("memberSearch").value.toLowerCase();
+  document.querySelectorAll("#roomMemberTable tbody tr").forEach(tr => tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none");
+}
+function removeMember(roomId, accountId){
+  const r = roomById(roomId);
+  const a = db.accounts.find(x => x.id === accountId);
+  if (!r || !confirm(`Remove ${a ? a.fullName : "this member"} from ${r.name}?`)) return;
+  r.members = r.members.filter(id => id !== accountId);
+  r.updatedAt = now();
+  notify(accountId, "Removed from room", `You were removed from ${r.name}.`);
+  log("MEMBER_REMOVED", `${a?.username || "member"} removed from ${r.name}`);
+  saveDB();
+  openRoom(roomId);
+}
+
+/* ---------- join room ---------- */
+function renderJoinRoom(){
+  const a = me();
+  const joined = db.rooms.filter(r => r.members.includes(a.id));
+  const openRooms = db.rooms.filter(r => r.active && r.visibility === "open" && r.ownerId !== a.id && !r.members.includes(a.id));
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Join a Room</h1>
+        <p>Enter a 6-digit code. Joined rooms are stored in your saved data.</p>
+      </div>
+    </div>
+
+    <section class="card section">
+      <h2>Join Using Code</h2>
+      <div class="notice">If the code is correct and the room exists in this browser storage, you will join successfully.</div>
+      <div class="form-grid">
+        <div class="wide field">
+          <label>6-DIGIT ROOM CODE</label>
+          <input id="joinCode" class="control" maxlength="6" inputmode="numeric" placeholder="123456">
+        </div>
+      </div>
+      <div id="joinErr" class="err"></div>
+      <button class="btn btn-primary" onclick="joinRoomByCode()">Join Room</button>
+    </section>
+
+    <section class="card section">
+      <h2>Open Rooms</h2>
+      ${openRooms.length ? openRooms.map(r => `
+        <div class="room">
+          <div>
+            <div class="room-name">${esc(r.name)}</div>
+            <div class="room-desc">${esc(r.description || "Open room")} · ${r.members.length} member(s)</div>
+          </div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="joinOpenRoom('${r.id}')">Join</button>
+          </div>
+        </div>
+      `).join("") : emptyState("🔒","No open rooms","Ask your teacher or boss for a room code.")}
+    </section>
+
+    <section class="card section">
+      <h2>My Joined Rooms</h2>
+      ${joined.length ? joined.map(r => `
+        <div class="room">
+          <div>
+            <div class="room-name">${esc(r.name)}</div>
+            <div class="room-desc">Code: ${r.code}</div>
+          </div>
+          ${badge("Joined")}
+        </div>
+      `).join("") : emptyState("＋","No joined rooms","Use a room code above.")}
+    </section>
+  `;
+}
+function joinRoomByCode(){
+  const code = document.getElementById("joinCode").value.trim();
+  const err = document.getElementById("joinErr");
+  err.textContent = "";
+  if (!/^\d{6}$/.test(code)) return err.textContent = "Enter exactly 6 digits.";
+  const r = roomByCode(code);
+  if (!r) return err.textContent = "Class not found. Check the code and try again.";
+  if (!r.active) return err.textContent = "This room is closed.";
+  if (r.ownerId === me().id) return err.textContent = "You cannot join your own room.";
+  if (r.members.includes(me().id)) return err.textContent = "You are already joined to this room.";
+  r.members.push(me().id);
+  r.updatedAt = now();
+  notify(r.ownerId, "New member joined", `${me().fullName} joined ${r.name}.`);
+  log("ROOM_JOINED", `Joined ${r.name}`);
+  saveDB();
+  toast(`Joined ${r.name} successfully.`);
+  renderJoinRoom();
+}
+function joinOpenRoom(roomId){
+  const r = roomById(roomId);
+  if (!r) return;
+  if (r.members.includes(me().id)) return toast("You are already in this room.");
+  r.members.push(me().id);
+  r.updatedAt = now();
+  notify(r.ownerId, "New member joined", `${me().fullName} joined ${r.name}.`);
+  log("ROOM_JOINED", `Joined ${r.name}`);
+  saveDB();
+  toast(`Joined ${r.name} successfully.`);
+  renderJoinRoom();
+}
+
+/* ---------- attendance / absence ---------- */
+function markAttendance(roomId, status){
+  const r = roomById(roomId);
+  if (!r) return;
+  let att = memberAttendance(roomId, me().id);
+  if (att){
+    att.status = status;
+    att.updatedAt = now();
+  } else {
+    db.attendance.push({ id: uid("att"), roomId, accountId: me().id, status, createdAt: now(), updatedAt: now(), source:"self" });
+  }
+  log("SELF_ATTENDANCE", `${r.name}: ${status}`);
+  saveDB();
+  toast(`Attendance saved as ${status}.`);
+  renderUserDashboard();
+}
+function openAbsenceModal(roomId){
+  const r = roomById(roomId);
+  openModal("Submit Absence Reason", `
+    <div class="warn">
+      If approved, your final status becomes <b>Exempted</b>.
+      If declined, it becomes <b>Absent</b>.
+    </div>
+    <div class="form-grid">
+      <div class="wide field">
+        <label>ROOM</label>
+        <input class="control" value="${esc(r?.name || "")}" disabled>
+      </div>
+      <div class="wide field">
+        <label>REASON FOR ABSENCE</label>
+        <textarea id="absReason" class="control" placeholder="Write a clear reason..."></textarea>
+      </div>
+    </div>
+    <div id="absErr" class="err"></div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="submitAbsence('${roomId}')">Send Request</button>
+      <button class="btn btn-neutral" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+}
+function submitAbsence(roomId){
+  const reason = document.getElementById("absReason").value.trim();
+  const err = document.getElementById("absErr");
+  const r = roomById(roomId);
+  err.textContent = "";
+  if (reason.length < 5) return err.textContent = "Please provide a more detailed reason.";
+  if (!r) return err.textContent = "Room not found.";
+  if (db.requests.some(x => x.roomId === roomId && x.accountId === me().id && x.status === "pending")) return err.textContent = "You already have a pending request.";
+  db.requests.push({ id: uid("req"), roomId, accountId: me().id, reason, status:"pending", createdAt: now(), decidedAt:null });
+  let att = memberAttendance(roomId, me().id);
+  if (att) {
+    att.status = "pending";
+    att.updatedAt = now();
+  } else {
+    db.attendance.push({ id: uid("att"), roomId, accountId: me().id, status:"pending", createdAt: now(), updatedAt: now(), source:"request" });
+  }
+  notify(r.ownerId, "New absence request", `${me().fullName} submitted a request for ${r.name}.`);
+  log("ABSENCE_REQUEST", `Requested absence in ${r.name}`);
+  saveDB();
+  closeModal();
+  toast("Absence request sent.");
+  renderUserDashboard();
+}
+
+/* ---------- requests ---------- */
+function renderRequestTable(requests){
+  if (!requests.length) return emptyState("✓","No absence requests","Requests will appear here.");
+  return `
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Person</th>
+            <th>Room</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${requests.map(req => {
+            const a = db.accounts.find(x => x.id === req.accountId);
+            const r = roomById(req.roomId);
+            return `<tr>
+              <td><b>${esc(a?.fullName || "Unknown")}</b><br><span class="muted">${esc(a?.username || "")}</span></td>
+              <td>${esc(r?.name || "Unknown")}</td>
+              <td>${esc(req.reason)}</td>
+              <td>${badge(req.status === "pending" ? "Pending" : req.status === "approved" ? "Exempted" : "Absent")}</td>
+              <td>${fmt(req.createdAt)}</td>
+              <td>${req.status === "pending" ? `
+                <div class="actions">
+                  <button class="btn btn-success btn-sm" onclick="decideRequest('${req.id}','approved')">Approve</button>
+                  <button class="btn btn-danger btn-sm" onclick="decideRequest('${req.id}','declined')">Decline</button>
+                </div>` : fmt(req.decidedAt)}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function renderManagerRequests(){
+  const rooms = db.rooms.filter(r => r.ownerId === me().id);
+  const requests = db.requests.filter(x => rooms.some(r => r.id === x.roomId)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Request Center</h1>
+        <p>Review absence reasons and approve or decline requests.</p>
+      </div>
+    </div>
+    <section class="card section">${renderRequestTable(requests)}</section>
+  `;
+}
+function renderMyRequests(){
+  const requests = db.requests.filter(x => x.accountId === me().id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>My Requests</h1>
+        <p>Track your absence request history.</p>
+      </div>
+    </div>
+    <section class="card section">${renderMyRequestTable(requests)}</section>
+  `;
+}
+function renderMyRequestTable(requests){
+  if (!requests.length) return emptyState("!","No requests","Your absence requests will appear here.");
+  return `
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Reason</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th>Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${requests.map(req => {
+            const r = roomById(req.roomId);
+            return `<tr>
+              <td>${esc(r?.name || "Unknown")}</td>
+              <td>${esc(req.reason)}</td>
+              <td>${fmt(req.createdAt)}</td>
+              <td>${badge(req.status === "pending" ? "Pending" : req.status === "approved" ? "Exempted" : "Absent")}</td>
+              <td>${fmt(req.decidedAt)}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function decideRequest(reqId, decision){
+  const req = db.requests.find(x => x.id === reqId);
+  if (!req || req.status !== "pending") return;
+  const r = roomById(req.roomId);
+  const status = decision === "approved" ? "approved" : "declined";
+  req.status = status;
+  req.decidedAt = now();
+  const final = status === "approved" ? "exempted" : "absent";
+  let att = memberAttendance(req.roomId, req.accountId);
+  if (att){
+    att.status = final;
+    att.updatedAt = now();
+  } else {
+    db.attendance.push({ id: uid("att"), roomId:req.roomId, accountId:req.accountId, status:final, createdAt: now(), updatedAt: now(), source:"decision" });
+  }
+  notify(req.accountId, "Absence Request Decision", `Your request for ${r?.name || "the room"} was ${status === "approved" ? "approved and marked Exempted" : "declined and marked Absent"}.`);
+  log("REQUEST_DECIDED", `${r?.name || "Room"} → ${status}`);
+  saveDB();
+  toast(`Request updated: ${status}`);
+  go("requests");
+}
+
+/* ---------- attendance ---------- */
+function renderManagerAttendance(){
+  const rooms = db.rooms.filter(r => r.ownerId === me().id);
+  const rows = rooms.flatMap(r => r.members.map(id => ({ room:r, member: db.accounts.find(a=>a.id===id), att: memberAttendance(r.id,id) })));
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Attendance Control</h1>
+        <p>Search, filter, and update attendance across rooms.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="go('reports')">Open Reports</button>
+      </div>
+    </div>
+    <section class="card section">
+      ${rows.length ? `
+        <div class="filters">
+          <input id="attSearch" class="control search" oninput="filterAttendance()" placeholder="Search name, username, or room...">
+          <select id="attRoomFilter" class="control" onchange="filterAttendance()">
+            <option value="">All rooms</option>
+            ${rooms.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join("")}
+          </select>
+          <select id="attStatusFilter" class="control" onchange="filterAttendance()">
+            <option value="">All statuses</option>
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+            <option value="exempted">Exempted</option>
+            <option value="pending">Pending</option>
+            <option value="not_marked">Not Marked</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="attTable">
+            <thead>
+              <tr>
+                <th>Room</th><th>Person</th><th>Role</th><th>Status</th><th>Updated</th><th>Quick Set</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(x => `
+                <tr data-room="${x.room.id}" data-status="${slugStatus(x.att?.status || "Not Marked")}">
+                  <td>${esc(x.room.name)}</td>
+                  <td><b>${esc(x.member?.fullName || "Unknown")}</b><br><span class="muted">${esc(x.member?.username || "")}</span></td>
+                  <td>${roleLabel(x.member?.role || "")}</td>
+                  <td>${badge(x.att?.status ? formatStatus(x.att.status) : "Not Marked")}</td>
+                  <td>${fmt(x.att?.updatedAt)}</td>
+                  <td>
+                    <div class="actions">
+                      <button class="btn btn-success btn-sm" onclick="setManagerAttendance('${x.room.id}','${x.member?.id}','present')">P</button>
+                      <button class="btn btn-danger btn-sm" onclick="setManagerAttendance('${x.room.id}','${x.member?.id}','absent')">A</button>
+                      <button class="btn btn-warning btn-sm" onclick="setManagerAttendance('${x.room.id}','${x.member?.id}','exempted')">E</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyState("✓","No attendance data","Members will appear after they join rooms.")}
+    </section>
+  `;
+}
+function slugStatus(v){ return String(v || "").toLowerCase().replace(/\s+/g,"_"); }
+function formatStatus(v){
+  const s = String(v || "");
+  if (s === "present") return "Present";
+  if (s === "absent") return "Absent";
+  if (s === "exempted") return "Exempted";
+  if (s === "pending") return "Pending";
+  return "Not Marked";
+}
+function filterAttendance(){
+  const q = document.getElementById("attSearch").value.toLowerCase();
+  const roomId = document.getElementById("attRoomFilter").value;
+  const status = document.getElementById("attStatusFilter").value;
+  document.querySelectorAll("#attTable tbody tr").forEach(tr => {
+    const okQ = tr.textContent.toLowerCase().includes(q);
+    const okR = !roomId || tr.dataset.room === roomId;
+    const okS = !status || tr.dataset.status === status;
+    tr.style.display = okQ && okR && okS ? "" : "none";
+  });
+}
+function setManagerAttendance(roomId, accountId, status){
+  const r = roomById(roomId);
+  const a = db.accounts.find(x => x.id === accountId);
+  if (!r || !a) return;
+  let att = memberAttendance(roomId, accountId);
+  if (att){
+    att.status = status;
+    att.updatedAt = now();
+  } else {
+    db.attendance.push({ id: uid("att"), roomId, accountId, status, createdAt: now(), updatedAt: now(), source:"manager" });
+  }
+  notify(accountId, "Attendance Updated", `${r.name}: you were marked ${formatStatus(status)}.`);
+  log("ATTENDANCE_SET", `${a.fullName} in ${r.name} → ${status}`);
+  saveDB();
+  toast(`Updated ${a.fullName} to ${formatStatus(status)}.`);
+  openRoom(roomId);
+}
+function renderBulkAttendance(roomId){
+  const r = roomById(roomId);
+  const rows = getRoomMembers(r);
+  return `
+    <div class="page-head" style="margin-bottom:12px">
+      <div>
+        <h2>Bulk Attendance</h2>
+        <div class="small-muted">Mark multiple members quickly.</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-success btn-sm" onclick="bulkSet('${roomId}','present')">Mark All Present</button>
+        <button class="btn btn-danger btn-sm" onclick="bulkSet('${roomId}','absent')">Mark All Absent</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Name</th><th>Status</th><th>Present</th><th>Absent</th><th>Exempted</th></tr>
+        </thead>
+        <tbody>
+          ${rows.map(m => {
+            const att = memberAttendance(roomId, m.id);
+            return `<tr>
+              <td><b>${esc(m.fullName)}</b></td>
+              <td>${badge(att ? formatStatus(att.status) : "Not Marked")}</td>
+              <td><button class="btn btn-success btn-sm" onclick="setManagerAttendance('${roomId}','${m.id}','present')">✓</button></td>
+              <td><button class="btn btn-danger btn-sm" onclick="setManagerAttendance('${roomId}','${m.id}','absent')">✕</button></td>
+              <td><button class="btn btn-warning btn-sm" onclick="setManagerAttendance('${roomId}','${m.id}','exempted')">E</button></td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function bulkSet(roomId, status){
+  const r = roomById(roomId);
+  if (!r || !r.members.length) return toast("No members in this room.");
+  if (!confirm(`Mark all ${r.members.length} members as ${formatStatus(status)}?`)) return;
+  r.members.forEach(accountId => {
+    let att = memberAttendance(roomId, accountId);
+    if (att){ att.status = status; att.updatedAt = now(); }
+    else db.attendance.push({ id: uid("att"), roomId, accountId, status, createdAt: now(), updatedAt: now(), source:"bulk" });
+    notify(accountId, "Bulk Attendance Update", `${r.name}: your attendance was marked ${formatStatus(status)}.`);
+  });
+  log("BULK_ATTENDANCE", `${r.name}: ${status}`);
+  saveDB();
+  toast("Bulk attendance completed.");
+  openRoom(roomId);
+}
+function renderAttendancePage(){
+  if (isManager()) return renderManagerAttendance();
+  const rows = db.attendance.filter(x => x.accountId === me().id).sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>My Attendance History</h1>
+        <p>Your saved attendance records across joined rooms.</p>
+      </div>
+    </div>
+    <section class="card section">
+      ${rows.length ? `
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Room</th><th>Status</th><th>Last Updated</th></tr></thead>
+            <tbody>
+              ${rows.map(r => `<tr><td>${esc(roomById(r.roomId)?.name || "Unknown")}</td><td>${badge(formatStatus(r.status))}</td><td>${fmt(r.updatedAt)}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyState("✓","No records yet","Join a room and mark attendance.")}
+    </section>
+  `;
+}
+
+/* ---------- reports ---------- */
+function managerRows(){
+  return db.rooms.filter(r => r.ownerId === me().id).flatMap(r => r.members.map(accountId => {
+    const a = db.accounts.find(x => x.id === accountId);
+    const att = memberAttendance(r.id, accountId);
+    return { roomId:r.id, room:r.name, accountId, name:a?.fullName || "Unknown", username:a?.username || "", role:a?.role || "", status: att ? formatStatus(att.status) : "Not Marked" };
+  }));
+}
+function renderReports(){
+  const rows = managerRows();
+  const saved = db.reports.filter(r => r.ownerId === me().id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const present = rows.filter(x => x.status === "Present").length;
+  const absent = rows.filter(x => x.status === "Absent").length;
+  const exempted = rows.filter(x => x.status === "Exempted").length;
+  const pending = rows.filter(x => x.status === "Pending").length;
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Analytics & Reports</h1>
+        <p>Generate and save attendance snapshots.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-primary" onclick="saveSnapshot()">Save Snapshot</button>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      ${statCard("Total Rows", rows.length, "Current report rows")}
+      ${statCard("Present", present, "Marked present")}
+      ${statCard("Absent", absent, "Marked absent")}
+      ${statCard("Exempted", exempted, "Approved absences")}
+    </div>
+
+    <section class="card section">
+      <h2>Current Report</h2>
+      <div class="filters">
+        <input id="repSearch" class="control search" oninput="filterReportTable()" placeholder="Search by room, name, username, or role..." />
+        <select id="repRoomFilter" class="control" onchange="filterReportTable()">
+          <option value="">All rooms</option>
+          ${db.rooms.filter(r => r.ownerId === me().id).map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join("")}
+        </select>
+        <select id="repStatusFilter" class="control" onchange="filterReportTable()">
+          <option value="">All statuses</option>
+          <option value="Present">Present</option>
+          <option value="Absent">Absent</option>
+          <option value="Exempted">Exempted</option>
+          <option value="Pending">Pending</option>
+          <option value="Not Marked">Not Marked</option>
+        </select>
+      </div>
+      ${rows.length ? `
+        <div class="table-wrap">
+          <table class="table" id="reportTable">
+            <thead><tr><th>Room</th><th>Person</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+            <tbody>
+              ${rows.map(r => `<tr data-room="${r.roomId}" data-status="${slugStatus(r.status)}"><td>${esc(r.room)}</td><td>${esc(r.name)}</td><td>${esc(r.username)}</td><td>${roleLabel(r.role)}</td><td>${badge(r.status)}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyState("▤","No report data","Members must join rooms first.")}
+    </section>
+
+    <section class="card section">
+      <h2>Saved Report Snapshots</h2>
+      ${saved.length ? saved.map(rep => `
+        <div class="room">
+          <div>
+            <div class="room-name">Snapshot</div>
+            <div class="room-desc">Saved ${fmt(rep.createdAt)} · ${rep.rows.length} row(s)</div>
+          </div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="viewSnapshot('${rep.id}')">View</button>
+          </div>
+        </div>
+      `).join("") : emptyState("▤","No saved reports","Save a snapshot to keep history.")}
+    </section>
+  `;
+}
+function filterReportTable(){
+  const q = (document.getElementById("repSearch").value || "").toLowerCase();
+  const roomId = document.getElementById("repRoomFilter").value || "";
+  const status = document.getElementById("repStatusFilter").value || "";
+  document.querySelectorAll("#reportTable tbody tr").forEach(tr => {
+    const okQ = tr.textContent.toLowerCase().includes(q);
+    const okR = !roomId || tr.dataset.room === roomId;
+    const okS = !status || tr.dataset.status === slugStatus(status);
+    tr.style.display = okQ && okR && okS ? "" : "none";
+  });
+}
+function currentFilteredRows(){
+  const q = (document.getElementById("repSearch")?.value || "").toLowerCase();
+  const roomId = document.getElementById("repRoomFilter")?.value || "";
+  const status = document.getElementById("repStatusFilter")?.value || "";
+  return managerRows().filter(r => {
+    const okQ = `${r.room} ${r.name} ${r.username} ${r.role}`.toLowerCase().includes(q);
+    const okR = !roomId || r.roomId === roomId;
+    const okS = !status || r.status === status;
+    return okQ && okR && okS;
+  });
+}
+function saveSnapshot(){
+  const rows = currentFilteredRows();
+  if (!rows.length) return toast("No rows match the current filters.");
+  db.reports.push({ id: uid("rep"), ownerId: me().id, createdAt: now(), rows: JSON.parse(JSON.stringify(rows)) });
+  log("REPORT_SAVED", `${rows.length} rows saved`);
+  saveDB();
+  toast("Report snapshot saved.");
+  renderReports();
+}
+function exportCSV(){
+  const rows = currentFilteredRows();
+  if (!rows.length) return toast("No rows to export.");
+  const csv = [
+    ["Room","Full Name","Username","Role","Status"],
+    ...rows.map(r => [r.room, r.name, r.username, roleLabel(r.role), r.status])
+  ].map(line => line.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type:"text/csv;charset=utf-8" }));
+  a.download = `JEMCODES_Report_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  log("REPORT_EXPORTED", `${rows.length} rows exported`);
+  toast("CSV exported.");
+}
+function viewSnapshot(id){
+  const rep = db.reports.find(r => r.id === id);
+  if (!rep) return;
+  openModal("Saved Report Snapshot", `
+    <div class="small-muted">Saved ${fmt(rep.createdAt)} · ${rep.rows.length} rows</div>
+    <div class="table-wrap" style="margin-top:12px">
+      <table class="table">
+        <thead><tr><th>Room</th><th>Name</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+        <tbody>
+          ${rep.rows.map(r => `<tr><td>${esc(r.room)}</td><td>${esc(r.name)}</td><td>${esc(r.username)}</td><td>${roleLabel(r.role)}</td><td>${badge(r.status)}</td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+
+/* ---------- notifications ---------- */
+function renderNotifications(){
+  const rows = db.notifications.filter(n => n.accountId === me().id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  rows.forEach(r => r.read = true);
+  saveDB();
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Notifications</h1>
+        <p>Room joins, attendance updates, and request decisions.</p>
+      </div>
+    </div>
+    <section class="card section">
+      ${rows.length ? rows.map(n => `
+        <div class="room">
+          <div>
+            <div class="room-name">${esc(n.title)}</div>
+            <div class="room-desc">${esc(n.message)}</div>
+          </div>
+          <div class="notification-time nowrap">${fmt(n.createdAt)}</div>
+        </div>
+      `).join("") : emptyState("●","No notifications","New updates appear here.")}
+    </section>
+  `;
+}
+
+/* ---------- settings / security / backup ---------- */
+function renderSettings(){
+  const a = me();
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Settings</h1>
+        <p>Manage your profile and local data.</p>
+      </div>
+    </div>
+    <section class="card section">
+      <div class="actions" style="align-items:center">
+        <div class="avatar-lg">${esc(initials(a.fullName))}</div>
+        <div>
+          <h2 style="margin:0">${esc(a.fullName)}</h2>
+          <div class="muted">@${esc(a.username)} · ${roleLabel(a.role)}</div>
+        </div>
+      </div>
+      <hr class="sep">
+      <div class="form-grid">
+        <div class="wide field">
+          <label>FULL NAME</label>
+          <input id="profileName" class="control" value="${esc(a.fullName)}" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+      </div>
+    </section>
+    <section class="card section">
+      <h2>Data Tools</h2>
+      <div class="info">Accounts, rooms, attendance, requests, reports, and notifications are stored separately in localStorage.</div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn btn-secondary" onclick="backupData()">Export Backup</button>
+        <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+      </div>
+    </section>
+  `;
+}
+function saveProfile(){
+  const name = document.getElementById("profileName").value.trim();
+  if (name.length < 2) return toast("Name cannot be empty.");
+  me().fullName = name;
+  log("PROFILE_UPDATED", "Full name updated");
+  saveDB();
+  toast("Profile updated.");
+  renderApp();
+}
+function renderSecurity(){
+  const a = me();
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Account & Security</h1>
+        <p>Change your password and review account details.</p>
+      </div>
+    </div>
+    <section class="card section">
+      <div class="actions" style="align-items:center">
+        <div class="avatar-lg">${esc(initials(a.fullName))}</div>
+        <div>
+          <h2 style="margin:0">${esc(a.fullName)}</h2>
+          <div class="muted">@${esc(a.username)} · ${roleLabel(a.role)}</div>
+        </div>
+      </div>
+      <hr class="sep">
+      <h2>Change Password</h2>
+      <div class="form-grid">
+        <div class="field"><label>CURRENT PASSWORD</label><input id="oldPass" class="control" type="password"></div>
+        <div class="field"><label>NEW PASSWORD</label><input id="newPass" class="control" type="password"></div>
+        <div class="wide field"><label>CONFIRM NEW PASSWORD</label><input id="confirmPass" class="control" type="password"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+      </div>
+    </section>
+    <section class="card section">
+      <div class="warn">
+        This is still browser-local storage. It is good for a demo on GitHub Pages, but not real secure authentication.
+      </div>
+    </section>
+  `;
+}
+function changePassword(){
+  const oldP = document.getElementById("oldPass").value;
+  const newP = document.getElementById("newPass").value;
+  const conP = document.getElementById("confirmPass").value;
+  if (me().password !== oldP) return toast("Current password is incorrect.");
+  if (newP.length < 6) return toast("New password must be at least 6 characters.");
+  if (newP !== conP) return toast("Passwords do not match.");
+  me().password = newP;
+  log("PASSWORD_CHANGED", "Password updated");
+  saveDB();
+  toast("Password updated.");
+}
+function backupData(){
+  const payload = { app:"JEMCODES", exportedAt: now(), data: db };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" }));
+  a.download = `JEMCODES_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  log("BACKUP_EXPORTED", "Backup exported");
+  toast("Backup exported.");
+}
+function clearAllData(){
+  if (!confirm("Clear all JEMCODES data from this browser?")) return;
+  localStorage.removeItem(DB_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+function renderBackupPage(){
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Backup</h1>
+        <p>Export or restore your local data.</p>
+      </div>
+    </div>
+    <section class="card section">
+      <h2>Export</h2>
+      <div class="info">You can save a backup file to your device, then restore it later.</div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn btn-secondary" onclick="backupData()">Export Backup File</button>
+      </div>
+    </section>
+    <section class="card section">
+      <h2>Restore</h2>
+      <div class="warn">Choose a backup file created by JEMCODES to restore your stored data.</div>
+      <div class="field" style="margin-top:12px">
+        <label>BACKUP FILE</label>
+        <input id="restoreFile" type="file" class="control" accept="application/json">
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="restoreBackup()">Restore Backup</button>
+      </div>
+    </section>
+  `;
+}
+function restoreBackup(){
+  const f = document.getElementById("restoreFile").files[0];
+  if (!f) return toast("Choose a backup file first.");
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if (!parsed.data || !parsed.data.accounts) throw new Error("Invalid backup");
+      db = {
+        ...structuredClone(DEFAULT_DB),
+        ...parsed.data,
+        settings: { ...structuredClone(DEFAULT_DB.settings), ...(parsed.data.settings || {}) }
+      };
+      saveDB();
+      toast("Backup restored. Reloading...");
+      setTimeout(() => location.reload(), 700);
+    }catch{
+      toast("Could not restore this file.");
+    }
+  };
+  reader.readAsText(f);
+}
+
+/* ---------- manager helpers ---------- */
+function renderMembers(){
+  const rows = managerRows();
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Member Directory</h1>
+        <p>All people who joined your rooms.</p>
+      </div>
+      <input id="memberFilter" class="control search" oninput="filterMembers()" placeholder="Search members..." />
+    </div>
+    <section class="card section">
+      ${rows.length ? `
+        <div class="table-wrap">
+          <table class="table" id="memberTable">
+            <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Room</th><th>Status</th></tr></thead>
+            <tbody>
+              ${rows.map(r => `<tr><td><b>${esc(r.name)}</b></td><td>${esc(r.username)}</td><td>${roleLabel(r.role)}</td><td>${esc(r.room)}</td><td>${badge(r.status)}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyState("♟","No members","Members appear after joining rooms.")}
+    </section>
+  `;
+}
+function filterMembers(){
+  const q = document.getElementById("memberFilter").value.toLowerCase();
+  document.querySelectorAll("#memberTable tbody tr").forEach(tr => tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none");
+}
+function managerRows(){
+  return db.rooms.filter(r => r.ownerId === me().id).flatMap(r => r.members.map(accountId => {
+    const a = db.accounts.find(x => x.id === accountId);
+    const att = memberAttendance(r.id, accountId);
+    return { roomId:r.id, room:r.name, accountId, name:a?.fullName || "Unknown", username:a?.username || "", role:a?.role || "", status: att ? formatStatus(att.status) : "Not Marked" };
+  }));
+}
+function renderRoomsOrDashboard(){
+  isManager() ? renderRooms() : renderUserDashboard();
+}
+
+/* ---------- navigation ---------- */
+function renderNotificationsOrOther(){
+  const a = me();
+  const rows = db.notifications.filter(n => n.accountId === a.id).sort((x,y)=>new Date(y.createdAt)-new Date(x.createdAt));
+  rows.forEach(r => r.read = true);
+  saveDB();
+  document.getElementById("main").innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Notifications</h1>
+        <p>Updates from room joins, requests, and attendance changes.</p>
+      </div>
+    </div>
+    <section class="card section">
+      ${rows.length ? rows.map(n => `
+        <div class="room">
+          <div>
+            <div class="room-name">${esc(n.title)}</div>
+            <div class="room-desc">${esc(n.message)}</div>
+          </div>
+          <div class="small-muted nowrap">${fmt(n.createdAt)}</div>
+        </div>
+      `).join("") : emptyState("●","No notifications","New updates appear here.")}
+    </section>
+  `;
+}
+
+/* ---------- route function ---------- */
+function go(route){
+  page = route;
+  const a = me();
+  if (!a){ renderAuth(); return; }
+
+  document.querySelectorAll(".nav").forEach(btn => btn.classList.toggle("active", btn.dataset.page === route));
+
+  if (route === "dashboard") return isManager() ? renderManagerDashboard() : renderUserDashboard();
+  if (route === "rooms") return renderRooms();
+  if (route === "members") return renderMembers();
+  if (route === "requests") return isManager() ? renderManagerRequests() : renderMyRequests();
+  if (route === "attendance") return renderAttendancePage();
+  if (route === "reports") return renderReports();
+  if (route === "join") return renderJoinRoom();
+  if (route === "notifications") return renderNotificationsOrOther();
+  if (route === "settings") return renderSettings();
+  if (route === "security") return renderSecurity();
+  if (route === "backup") return renderBackupPage();
+}
+
+/* ---------- startup ---------- */
+function boot(){
+  if (session && me()) renderApp();
+  else renderAuth();
+}
+boot();
+</script>
+</body>
+</html>
