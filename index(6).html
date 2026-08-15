@@ -1,0 +1,3197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JEMCODES — Cloud Attendance System</title>
+<style>
+:root{
+    --bg:#070c16;
+    --bg2:#0b1120;
+    --panel:#111a2d;
+    --panel2:#141f35;
+    --line:#253553;
+    --text:#eef3ff;
+    --muted:#9aa7c0;
+    --primary:#6f8cff;
+    --primary2:#5878ff;
+    --success:#36d39a;
+    --success2:#1a8f66;
+    --danger:#ff6b7a;
+    --warning:#ffd06d;
+    --info:#95bbff;
+    --shadow:0 18px 50px rgba(0,0,0,.28);
+    --shadow-soft:0 6px 18px rgba(0,0,0,.18);
+    --radius:18px;
+    --radius-sm:12px;
+    --sidebar:270px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    margin:0;
+    min-height:100vh;
+    font:15px/1.5 Inter,Segoe UI,Arial,sans-serif;
+    color:var(--text);
+    background:
+        radial-gradient(circle at top left, rgba(111,140,255,.16), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(54,211,154,.10), transparent 28%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+}
+button,input,select,textarea{font:inherit}
+button{border:0;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+button:disabled{opacity:.55;cursor:not-allowed}
+input,select,textarea{outline:none}
+.hidden{display:none!important}
+a{color:inherit}
+.muted{color:var(--muted)}
+.nowrap{white-space:nowrap}
+.full{width:100%}
+
+.brand{
+    font-size:30px;
+    font-weight:950;
+    letter-spacing:-1.6px;
+    line-height:1;
+}
+.brand span{color:var(--primary)}
+
+.btn{
+    min-height:44px;
+    padding:11px 15px;
+    border-radius:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-weight:850;
+    white-space:nowrap;
+}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 8px 20px rgba(111,140,255,.22)}
+.btn-primary:hover{background:var(--primary2)}
+.btn-secondary{background:#182541;color:var(--text);border:1px solid var(--line)}
+.btn-success{background:rgba(54,211,154,.14);color:#b8f4d9;border:1px solid rgba(54,211,154,.25)}
+.btn-danger{background:rgba(255,107,122,.14);color:#ffb8bf;border:1px solid rgba(255,107,122,.25)}
+.btn-warning{background:rgba(255,208,109,.14);color:#ffe5aa;border:1px solid rgba(255,208,109,.22)}
+.btn-neutral{background:#202c46;color:var(--text);border:1px solid var(--line)}
+.btn-sm{min-height:34px;padding:7px 10px;font-size:12px}
+.btn-chip{border-radius:999px;padding:7px 11px}
+
+.card{
+    background:linear-gradient(180deg, rgba(20,31,54,.95), rgba(16,25,43,.96));
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-soft);
+}
+.section{padding:20px;margin-top:18px}
+.section h2{margin:0 0 14px;font-size:18px}
+
+.auth-wrap{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:24px;
+}
+.auth-card{
+    width:min(760px,100%);
+    padding:32px;
+}
+.auth-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:18px;
+}
+.auth-subtitle{
+    margin:8px 0 0;
+    color:var(--muted);
+    line-height:1.6;
+}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px}
+.pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 11px;
+    border-radius:999px;
+    background:#182541;
+    border:1px solid var(--line);
+    color:var(--text);
+    font-size:12px;
+    font-weight:850;
+}
+.seg{
+    display:flex;
+    gap:8px;
+    margin:18px 0 10px;
+    background:#0f1728;
+    padding:6px;
+    border-radius:14px;
+    border:1px solid var(--line);
+}
+.seg button{
+    flex:1;
+    background:transparent;
+    color:var(--muted);
+    padding:11px 12px;
+    border-radius:10px;
+    font-weight:900;
+}
+.seg button.active{
+    background:linear-gradient(180deg,var(--primary),var(--primary2));
+    color:#fff;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.wide{grid-column:1/-1}
+.field{margin:12px 0}
+.field label{
+    display:block;
+    margin:0 0 7px;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.25px;
+}
+.control{
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:#0f182b;
+    color:var(--text);
+}
+.control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(111,140,255,.12)}
+textarea.control{min-height:110px;resize:vertical}
+.helper{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+}
+.err{
+    min-height:18px;
+    margin-top:8px;
+    color:#ff9ba4;
+    font-size:13px;
+    font-weight:800;
+}
+.notice{
+    padding:13px 14px;
+    border-radius:12px;
+    background:rgba(111,140,255,.12);
+    border:1px solid rgba(111,140,255,.18);
+    color:#dbe4ff;
+    font-size:13px;
+    line-height:1.6;
+}
+.notice.good{
+    background:rgba(54,211,154,.12);
+    border-color:rgba(54,211,154,.18);
+    color:#bff8d8;
+}
+.notice.warn{
+    background:rgba(255,208,109,.12);
+    border-color:rgba(255,208,109,.18);
+    color:#ffe0a1;
+}
+
+.topbar{
+    height:72px;
+    position:sticky;
+    top:0;
+    z-index:40;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 24px;
+    background:rgba(8,13,23,.85);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+.userbox{display:flex;align-items:center;gap:10px}
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(180deg,var(--primary),var(--primary2));
+    color:#fff;
+    font-weight:950;
+}
+
+.layout{
+    min-height:calc(100vh - 72px);
+    display:grid;
+    grid-template-columns:var(--sidebar) minmax(0,1fr);
+}
+.sidebar{
+    background:rgba(14,21,37,.94);
+    border-right:1px solid rgba(255,255,255,.08);
+    padding:16px 12px;
+}
+.side-title{
+    padding:10px;
+    color:#7f8ba5;
+    font-size:10px;
+    font-weight:950;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+}
+.nav{
+    width:100%;
+    text-align:left;
+    padding:11px 12px;
+    margin:3px 0;
+    border-radius:12px;
+    background:transparent;
+    color:#b5c0d8;
+    font-weight:800;
+}
+.nav:hover,.nav.active{
+    background:#1a2742;
+    color:#fff;
+}
+.nav-badge{
+    float:right;
+    padding:4px 7px;
+    border-radius:999px;
+    background:rgba(255,107,122,.14);
+    color:#ffb8bf;
+    font-size:10px;
+    font-weight:900;
+}
+.main{
+    max-width:1600px;
+    width:100%;
+    margin:0 auto;
+    padding:28px;
+}
+.page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:18px;
+    margin-bottom:22px;
+}
+.page-head h1{
+    margin:0 0 6px;
+    font-size:30px;
+    line-height:1.15;
+}
+.page-head p{margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.stat{padding:18px}
+.stat small{display:block;color:var(--muted);font-weight:800}
+.stat b{display:block;font-size:30px;margin-top:4px}
+.stat span{display:block;font-size:11px;color:var(--muted)}
+
+.room{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:18px;
+    margin-bottom:10px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#111b30;
+}
+.room:last-child{margin-bottom:0}
+.room-name{font-size:17px;font-weight:950}
+.room-desc{color:var(--muted);font-size:12px;margin-top:3px;line-height:1.5}
+.room-code{
+    font-size:22px;
+    letter-spacing:4px;
+    font-weight:1000;
+    color:#dbe4ff;
+}
+.room-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:900;
+}
+.badge-present,.badge-joined,.badge-active,.badge-exempted,.badge-approved{
+    color:#bff8d8;
+    background:rgba(54,211,154,.14);
+}
+.badge-absent,.badge-declined,.badge-closed{
+    color:#ffb8bf;
+    background:rgba(255,107,122,.14);
+}
+.badge-pending{color:#dbe4ff;background:rgba(111,140,255,.14)}
+.badge-not{color:#d6dce7;background:rgba(255,255,255,.06)}
+
+.table-wrap{overflow:auto}
+.table{
+    width:100%;
+    min-width:760px;
+    border-collapse:collapse;
+}
+.table th{
+    text-align:left;
+    padding:12px 10px;
+    color:#8290ab;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.45px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+.table td{
+    padding:13px 10px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    font-size:13px;
+    vertical-align:middle;
+}
+.table tr:hover td{background:rgba(255,255,255,.03)}
+
+.empty{
+    text-align:center;
+    color:var(--muted);
+    padding:34px 16px;
+}
+.empty b{display:block;color:var(--text);margin-top:5px}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.search{max-width:380px}
+.tabs{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    margin-bottom:16px;
+}
+.tab{
+    padding:10px 13px;
+    background:transparent;
+    color:var(--muted);
+    font-weight:900;
+    border-radius:12px 12px 0 0;
+}
+.tab.active{
+    color:#fff;
+    background:#1a2742;
+    border-bottom:2px solid var(--primary);
+}
+.info,.warn,.good{
+    padding:13px 14px;
+    border-radius:12px;
+    font-size:13px;
+    line-height:1.6;
+}
+.info{background:rgba(111,140,255,.12);border:1px solid rgba(111,140,255,.18);color:#dbe4ff}
+.warn{background:rgba(255,208,109,.12);border:1px solid rgba(255,208,109,.18);color:#ffe0a1}
+.good{background:rgba(54,211,154,.12);border:1px solid rgba(54,211,154,.18);color:#bff8d8}
+.progress{
+    height:8px;
+    background:#1a2742;
+    border-radius:999px;
+    overflow:hidden;
+}
+.progress > i{
+    display:block;
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--primary),var(--success));
+}
+.timeline{position:relative;padding-left:24px}
+.timeline:before{
+    content:"";
+    position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:#26365a;
+}
+.event{position:relative;padding:0 0 16px}
+.event:before{
+    content:"";
+    position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;
+    background:var(--primary);
+    border:3px solid #1a2742;
+}
+.event b{font-size:13px}
+.event small{display:block;color:var(--muted);margin-top:3px}
+
+.modal{
+    position:fixed;inset:0;z-index:100;
+    display:grid;place-items:center;
+    padding:20px;
+    background:rgba(2,7,18,.72);
+}
+.modal-box{
+    width:min(760px,100%);
+    max-height:90vh;
+    overflow:auto;
+    padding:24px;
+    background:linear-gradient(180deg,#121c31,#0f1729);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    box-shadow:var(--shadow);
+}
+.modal-head{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px
+}
+.modal-head h2{margin:0}
+.close{width:34px;height:34px;border-radius:50%;background:#1f2a44;color:var(--text)}
+.toast{
+    position:fixed;
+    right:20px;bottom:20px;z-index:200;
+    padding:13px 16px;
+    background:#09111f;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    max-width:360px;
+    font-size:13px;
+    font-weight:800;
+}
+.avatar-lg{
+    width:64px;height:64px;border-radius:18px;
+    display:grid;place-items:center;
+    background:#0f182b;
+    color:#dbe4ff;
+    font-size:22px;font-weight:1000;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.wide{grid-column:1/-1}
+hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:18px 0}
+.small-muted{font-size:12px;color:var(--muted)}
+.code-large{
+    font-size:44px;
+    letter-spacing:8px;
+    font-weight:1000;
+    text-align:center;
+    padding:18px;
+    border-radius:16px;
+    background:#0f182b;
+    border:1px solid var(--line);
+    color:#dbe4ff;
+}
+.file-drop{
+    border:2px dashed #2b3c61;
+    border-radius:16px;
+    padding:22px;
+    background:#0f182b;
+}
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:12px;
+}
+.kpi{
+    padding:17px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:15px;
+    background:#111b30;
+}
+.kpi-label{
+    display:block;
+    margin-top:9px;
+    font-size:11px;
+    color:#7b8492;
+    font-weight:850;
+    text-transform:uppercase;
+}
+.kpi-value{
+    display:block;
+    margin-top:3px;
+    font-size:26px;
+    font-weight:950;
+    letter-spacing:-0.8px;
+}
+.kpi-icon{font-size:20px}
+.stat-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin:9px 0;
+    font-size:12px;
+}
+.stat-row strong{font-size:13px}
+
+@media(max-width:1280px){
+    .grid-4,.kpi-grid{grid-template-columns:repeat(3,1fr)}
+    .grid-2{grid-template-columns:1fr}
+}
+@media(max-width:800px){
+    .layout{grid-template-columns:1fr}
+    .sidebar{
+        display:flex;
+        overflow:auto;
+        gap:4px;
+        padding:8px;
+        position:sticky;
+        top:72px;
+        z-index:30;
+    }
+    .side-title{display:none}
+    .nav{white-space:nowrap;width:auto}
+    .main{padding:16px}
+    .page-head{flex-direction:column}
+    .room{align-items:flex-start;flex-direction:column}
+    .room-actions{justify-content:flex-start}
+    .grid-4,.grid-3,.grid-2,.form-grid,.kpi-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modalRoot" class="hidden"></div>
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* =========================================================
+   JEMCODES CLOUD ATTENDANCE SYSTEM
+   =========================================================
+   Purpose:
+   - GitHub Pages frontend
+   - Supabase backend for shared accounts + shared rooms
+   - Dark theme by default
+   - Separate Sign In / Log In buttons
+   - Teacher/Boss dashboards
+   - Student/Worker dashboards
+   - Shared class codes that work across browsers
+   ========================================================= */
+
+/* ---------------- CONFIG ---------------- */
+const LOCAL_SETTINGS_KEY = "jemcodes_local_settings_v1";
+const LOCAL_UI_KEY = "jemcodes_ui_v1";
+
+// =========================================================
+// JEMCODES ONE-TIME OWNER CONFIGURATION
+// The Project URL is already built in. Replace ONLY the
+// placeholder publishable key below once before uploading to
+// GitHub Pages. Do NOT use a secret/service_role key.
+// =========================================================
+const JEMCODES_SUPABASE_URL = "https://neblaxojmjgkzkmrscdl.supabase.co";
+const JEMCODES_SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+// After this one-time owner setup, every browser connects automatically.
+// The publishable key is intended for browser apps; never put a secret/service_role key here.
+
+const DEFAULT_SETTINGS = {
+    supabaseUrl: JEMCODES_SUPABASE_URL,
+    supabaseAnonKey: JEMCODES_SUPABASE_PUBLISHABLE_KEY,
+    appName: "JEMCODES"
+};
+
+let localSettings = loadLocalSettings();
+
+let supabaseClient = null;
+let session = null;
+let currentUser = null;
+let authMode = "signup";
+let currentPage = "dashboard";
+let activeRoomId = null;
+let toastTimer = null;
+let realtimeChannel = null;
+
+/* ---------------- DOM SHORTCUTS ---------------- */
+const $ = (selector) => document.querySelector(selector);
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    }[char]));
+}
+
+function uid(prefix = "id") {
+    return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
+}
+
+function now() {
+    return new Date().toISOString();
+}
+
+function fmt(value) {
+    return value ? new Date(value).toLocaleString() : "—";
+}
+
+function initials(name) {
+    return String(name || "U")
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(word => word[0])
+        .join("")
+        .toUpperCase();
+}
+
+function roleLabel(role) {
+    return {
+        student: "Student",
+        worker: "Worker",
+        teacher: "Teacher",
+        boss: "Boss"
+    }[role] || role || "User";
+}
+
+function roleIcon(role) {
+    return {
+        student: "🎓",
+        worker: "🧰",
+        teacher: "📚",
+        boss: "🏢"
+    }[role] || "👤";
+}
+
+function slugStatus(value) {
+    return String(value ?? "").toLowerCase().replace(/\s+/g, "_");
+}
+
+function formatStatus(value) {
+    const s = String(value || "");
+    if (s === "present") return "Present";
+    if (s === "absent") return "Absent";
+    if (s === "exempted") return "Exempted";
+    if (s === "pending") return "Pending";
+    return "Not Marked";
+}
+
+function badge(status) {
+    const value = formatStatus(status);
+    const key = value.toLowerCase().replace(/\s+/g, "-");
+    let cls = "badge-not";
+    if (key === "present" || key === "joined" || key === "active") cls = "badge-present";
+    else if (key === "approved" || key === "exempted") cls = "badge-exempted";
+    else if (key === "absent" || key === "declined" || key === "closed") cls = "badge-absent";
+    else if (key === "pending") cls = "badge-pending";
+    return `<span class="badge ${cls}">${escapeHTML(value)}</span>`;
+}
+
+function progress(percent) {
+    const p = Math.max(0, Math.min(100, Number(percent) || 0));
+    return `<div class="progress"><i style="width:${p}%"></i></div>`;
+}
+
+function statCard(label, value, sub) {
+    return `<div class="card stat"><small>${escapeHTML(label)}</small><b>${escapeHTML(value)}</b><span>${escapeHTML(sub)}</span></div>`;
+}
+
+function emptyState(icon, title, message) {
+    return `
+        <div class="empty">
+            <div style="font-size:30px">${icon}</div>
+            <b>${escapeHTML(title)}</b>
+            <div>${escapeHTML(message)}</div>
+        </div>
+    `;
+}
+
+function toast(message) {
+    const node = document.getElementById("toast");
+    node.textContent = message;
+    node.classList.remove("hidden");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => node.classList.add("hidden"), 3000);
+}
+
+function openModal(title, content) {
+    const root = document.getElementById("modalRoot");
+    root.innerHTML = `
+        <div class="modal" onclick="closeModalBg(event)">
+            <div class="modal-box">
+                <div class="modal-head">
+                    <h2>${escapeHTML(title)}</h2>
+                    <button class="close" onclick="closeModal()">×</button>
+                </div>
+                ${content}
+            </div>
+        </div>
+    `;
+    root.classList.remove("hidden");
+}
+
+function closeModal() {
+    const root = document.getElementById("modalRoot");
+    root.classList.add("hidden");
+    root.innerHTML = "";
+}
+
+function closeModalBg(e) {
+    if (e.target.classList.contains("modal")) closeModal();
+}
+
+/* ---------------- LOCAL SETTINGS ---------------- */
+function loadLocalSettings() {
+    try {
+        const raw = localStorage.getItem(LOCAL_SETTINGS_KEY);
+        if (!raw) return structuredClone(DEFAULT_SETTINGS);
+        const saved = JSON.parse(raw);
+        return { ...structuredClone(DEFAULT_SETTINGS), ...saved,
+            supabaseUrl: saved.supabaseUrl || JEMCODES_SUPABASE_URL,
+            supabaseAnonKey: saved.supabaseAnonKey || JEMCODES_SUPABASE_PUBLISHABLE_KEY
+        };
+    } catch {
+        return structuredClone(DEFAULT_SETTINGS);
+    }
+}
+
+function saveLocalSettings() {
+    localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(localSettings));
+}
+
+function saveUiMode(mode) {
+    localStorage.setItem(LOCAL_UI_KEY, JSON.stringify({ authMode: mode }));
+}
+
+function loadUiMode() {
+    try {
+        const raw = localStorage.getItem(LOCAL_UI_KEY);
+        if (!raw) return "signup";
+        const parsed = JSON.parse(raw);
+        return parsed.authMode || "signup";
+    } catch {
+        return "signup";
+    }
+}
+
+/* ---------------- SUPABASE ---------------- */
+function ensureSupabaseClient() {
+    const url = (JEMCODES_SUPABASE_URL || localSettings.supabaseUrl || "").trim();
+    const key = (JEMCODES_SUPABASE_PUBLISHABLE_KEY && JEMCODES_SUPABASE_PUBLISHABLE_KEY !== "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE"
+        ? JEMCODES_SUPABASE_PUBLISHABLE_KEY
+        : (localSettings.supabaseAnonKey || "")).trim();
+
+    if (!url || !key) {
+        supabaseClient = null;
+        return null;
+    }
+
+    if (!window.supabase || !window.supabase.createClient) {
+        supabaseClient = null;
+        return null;
+    }
+
+    if (!supabaseClient) {
+        supabaseClient = window.supabase.createClient(url, key, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true
+            }
+        });
+    }
+
+    return supabaseClient;
+}
+
+async function getSessionAndUser() {
+    const sb = ensureSupabaseClient();
+    if (!sb) return { session: null, user: null };
+
+    const { data: sessionData } = await sb.auth.getSession();
+    const activeSession = sessionData?.session || null;
+
+    if (!activeSession) return { session: null, user: null };
+
+    const { data: userData } = await sb.auth.getUser();
+    return {
+        session: activeSession,
+        user: userData?.user || null
+    };
+}
+
+async function signOut() {
+    const sb = ensureSupabaseClient();
+    if (sb) {
+        try {
+            await sb.auth.signOut();
+        } catch {}
+    }
+    session = null;
+    currentUser = null;
+    activeRoomId = null;
+    stopRealtime();
+    renderAuth();
+}
+
+function startRealtime() {
+    const sb = ensureSupabaseClient();
+    if (!sb || !currentUser) return;
+
+    stopRealtime();
+
+    realtimeChannel = sb
+        .channel("jemcodes-live")
+        .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "rooms" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "room_members" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "attendance" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "requests" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, refreshCurrentView)
+        .on("postgres_changes", { event: "*", schema: "public", table: "reports" }, refreshCurrentView)
+        .subscribe();
+}
+
+function stopRealtime() {
+    if (realtimeChannel && supabaseClient) {
+        try {
+            supabaseClient.removeChannel(realtimeChannel);
+        } catch {}
+    }
+    realtimeChannel = null;
+}
+
+function refreshCurrentView() {
+    if (!currentUser) return;
+    renderApp();
+}
+
+/* ---------------- AUTH SCREEN ---------------- */
+function renderAuth() {
+    authMode = loadUiMode();
+
+    document.getElementById("app").innerHTML = `
+        <div class="auth-wrap">
+            <div class="card auth-card">
+                <div class="auth-top">
+                    <div>
+                        <div class="brand">JEM<span>CODES</span></div>
+                        <p class="auth-subtitle">
+                            Cloud attendance for students, workers, teachers, and bosses.
+                            Rooms and attendance are saved in a shared backend so class codes work across browsers.
+                        </p>
+                    </div>
+                    <div class="pill-row">
+                        <span class="pill">Dark theme</span>
+                        <span class="pill">Shared storage</span>
+                        <span class="pill">GitHub Pages</span>
+                    </div>
+                </div>
+
+                <div class="seg">
+                    <button class="${authMode === "signup" ? "active" : ""}" onclick="switchAuthMode('signup')">Sign In</button>
+                    <button class="${authMode === "login" ? "active" : ""}" onclick="switchAuthMode('login')">Log In</button>
+                </div>
+
+                <div class="notice ${authMode === "signup" ? "good" : ""}">
+                    ${authMode === "signup"
+                        ? "Sign In creates your JEMCODES account using only your real name, username, password, and account category."
+                        : "Log In uses your username and password. No email is required."}
+                </div>
+
+                <form onsubmit="${authMode === "signup" ? "handleSignup(event)" : "handleLogin(event)"}" autocomplete="on">
+                    <div class="form-grid">
+                        <div class="wide field">
+                            <label>FULL NAME</label>
+                            <input id="fullName" class="control" placeholder="Enter your full name" required />
+                        </div>
+
+                        <div class="field">
+                            <label>PASSWORD</label>
+                            <input id="password" class="control" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+                        </div>
+
+                        <div class="wide field">
+                            <label>ACCOUNT CATEGORY</label>
+                            <select id="role" class="control" required>
+                                <option value="">Select category</option>
+                                <option value="student">Student</option>
+                                <option value="worker">Worker</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="boss">Boss</option>
+                            </select>
+                        </div>
+
+                        <div class="wide field">
+                            <label>USERNAME / DISPLAY NAME</label>
+                            <input id="username" class="control" placeholder="Choose a username" ${authMode === "signup" ? "required" : ""} />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary full" type="submit">
+                        ${authMode === "signup" ? "Sign In / Create Account" : "Log In"}
+                    </button>
+
+                    <div id="authError" class="err"></div>
+                </form>
+
+            </div>
+        </div>
+    `;
+}
+
+function switchAuthMode(mode) {
+    authMode = mode;
+    saveUiMode(mode);
+    renderAuth();
+}
+
+function getFormValues() {
+    return {
+        fullName: document.getElementById("fullName")?.value.trim() || "",
+        password: document.getElementById("password")?.value || "",
+        role: document.getElementById("role")?.value || "",
+        username: document.getElementById("username")?.value.trim() || ""
+    };
+}
+
+// Supabase Auth still needs an internal email-shaped identifier for
+// password authentication. Users NEVER see or enter this identifier.
+function internalAuthEmail(username) {
+    const clean = String(username || "").trim().toLowerCase();
+    return clean.replace(/[^a-z0-9._-]/g, "_") + "@auth.jemcodes.local";
+}
+
+async function handleSignup(event) {
+    event.preventDefault();
+    const error = document.getElementById("authError");
+    error.textContent = "";
+
+    const { fullName, password, role, username } = getFormValues();
+
+    if (fullName.length < 2) return error.textContent = "Enter your real/full name.";
+    if (password.length < 6) return error.textContent = "Password must be at least 6 characters.";
+    if (!role) return error.textContent = "Select your account category.";
+    if (username.length < 3) return error.textContent = "Username must be at least 3 characters.";
+
+    const sb = ensureSupabaseClient();
+    if (!sb) {
+        error.textContent = "JEMCODES cloud configuration is missing. The owner must add the publishable key once in index.html.";
+        return;
+    }
+
+    const authEmail = internalAuthEmail(username);
+    const { data, error: authError } = await sb.auth.signUp({
+        email: authEmail,
+        password,
+        options: {
+            data: {
+                full_name: fullName,
+                username,
+                role
+            }
+        }
+    });
+
+    if (authError) {
+        error.textContent = authError.message;
+        return;
+    }
+
+    const userId = data.user?.id;
+    if (!userId) {
+        error.textContent = "Account creation did not return a user ID.";
+        return;
+    }
+
+    // The Supabase trigger in the JEMCODES SQL creates the matching
+    // public.profiles row from the Auth metadata.
+    if (!data.session) {
+        error.textContent = "Account was created but Supabase is waiting for email confirmation. Turn OFF Confirm email in Supabase Auth → Email, then create the account again.";
+        return;
+    }
+
+    toast("Account created successfully.");
+    await bootstrapSession();
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const error = document.getElementById("authError");
+    error.textContent = "";
+
+    const { fullName, password, role, username } = getFormValues();
+
+    if (fullName.length < 2) return error.textContent = "Enter your real/full name.";
+    if (username.length < 3) return error.textContent = "Enter your username.";
+    if (password.length < 6) return error.textContent = "Enter your password.";
+    if (!role) return error.textContent = "Select your account category.";
+
+    const sb = ensureSupabaseClient();
+    if (!sb) {
+        error.textContent = "JEMCODES cloud configuration is missing. The owner must add the publishable key once in index.html.";
+        return;
+    }
+
+    const { data, error: authError } = await sb.auth.signInWithPassword({
+        email: internalAuthEmail(username),
+        password
+    });
+
+    if (authError) {
+        error.textContent = authError.message;
+        return;
+    }
+
+    const userId = data.user?.id;
+    if (!userId) {
+        error.textContent = "Login succeeded, but no user ID was returned.";
+        return;
+    }
+
+    const { data: profileData, error: profileError } = await sb
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+
+    if (profileError) {
+        error.textContent = profileError.message;
+        return;
+    }
+
+    if (profileData && profileData.role !== role) {
+        error.textContent = "Account category does not match this login.";
+        return;
+    }
+
+    if (profileData) {
+        const patch = {
+            full_name: fullName || profileData.full_name,
+            username: username || profileData.username,
+            role,
+            updated_at: now()
+        };
+        const { error: updateError } = await sb.from("profiles").update(patch).eq("id", userId);
+        if (updateError) {
+            error.textContent = updateError.message;
+            return;
+        }
+    }
+
+    toast("Logged in successfully.");
+    await bootstrapSession();
+}
+
+/* ---------------- BOOTSTRAP ---------------- */
+async function bootstrapSession() {
+    const sb = ensureSupabaseClient();
+
+    if (!sb) {
+        renderAuth();
+        return;
+    }
+
+    const { session: s, user: u } = await getSessionAndUser();
+    session = s;
+    currentUser = u ? await loadCurrentProfile(u.id) : null;
+
+    if (!currentUser) {
+        renderAuth();
+        return;
+    }
+
+    startRealtime();
+    currentPage = "dashboard";
+    renderApp();
+}
+
+async function loadCurrentProfile(userId) {
+    const sb = ensureSupabaseClient();
+    if (!sb) return null;
+
+    const { data, error } = await sb.from("profiles").select("*").eq("id", userId).maybeSingle();
+    if (error || !data) return null;
+    return data;
+}
+
+/* ---------------- APP SHELL ---------------- */
+function renderApp() {
+    if (!currentUser) {
+        renderAuth();
+        return;
+    }
+
+    const unread = 0; // refreshed in the page renderer when needed
+
+    document.getElementById("app").innerHTML = `
+        <header class="topbar">
+            <div class="brand">JEM<span>CODES</span></div>
+            <div class="userbox">
+                <div style="text-align:right">
+                    <div style="font-weight:900;font-size:13px">${escapeHTML(currentUser.full_name)}</div>
+                    <div class="muted" style="font-size:11px">${roleLabel(currentUser.role)}</div>
+                </div>
+                <div class="avatar">${escapeHTML(initials(currentUser.full_name))}</div>
+            </div>
+        </header>
+        <div class="layout">
+            <aside class="sidebar">${renderSidebar(unread)}</aside>
+            <main id="main" class="main"></main>
+        </div>
+    `;
+    go(currentPage);
+}
+
+function renderSidebar(unread) {
+    const items = [];
+    items.push(`<button class="nav" data-page="dashboard" onclick="go('dashboard')">⌂ Dashboard</button>`);
+
+    if (isManager()) {
+        items.push(`<button class="nav" data-page="rooms" onclick="go('rooms')">▣ My Rooms</button>`);
+        items.push(`<button class="nav" data-page="members" onclick="go('members')">♟ Members</button>`);
+        items.push(`<button class="nav" data-page="requests" onclick="go('requests')">! Request Center</button>`);
+        items.push(`<button class="nav" data-page="attendance" onclick="go('attendance')">✓ Attendance</button>`);
+        items.push(`<button class="nav" data-page="reports" onclick="go('reports')">▤ Reports</button>`);
+    } else {
+        items.push(`<button class="nav" data-page="join" onclick="go('join')">＋ Join a Room</button>`);
+        items.push(`<button class="nav" data-page="attendance" onclick="go('attendance')">✓ My Attendance</button>`);
+        items.push(`<button class="nav" data-page="requests" onclick="go('requests')">! My Requests</button>`);
+    }
+
+    items.push(`<button class="nav" data-page="notifications" onclick="go('notifications')">● Notifications ${unread ? `<span class="nav-badge">${unread}</span>` : ""}</button>`);
+    items.push(`<button class="nav" data-page="settings" onclick="go('settings')">⚙ Settings</button>`);
+    items.push(`<button class="nav" data-page="schema" onclick="go('schema')">🛠 Setup</button>`);
+    items.push(`<button class="nav" onclick="signOut()">↪ Log Out</button>`);
+
+    return `
+        <div class="side-title">Main Menu</div>
+        ${items.join("")}
+    `;
+}
+
+/* ---------------- ROUTING ---------------- */
+async function go(route) {
+    currentPage = route;
+    if (!currentUser) {
+        renderAuth();
+        return;
+    }
+
+    document.querySelectorAll(".nav").forEach(btn => btn.classList.toggle("active", btn.dataset.page === route));
+
+    if (route === "dashboard") return isManager() ? renderManagerDashboard() : renderUserDashboard();
+    if (route === "rooms") return isManager() ? renderRoomsPage() : renderUserDashboard();
+    if (route === "members") return renderMembersPage();
+    if (route === "requests") return isManager() ? renderManagerRequests() : renderMyRequests();
+    if (route === "attendance") return isManager() ? renderManagerAttendance() : renderMyAttendance();
+    if (route === "reports") return renderReportsPage();
+    if (route === "join") return renderJoinRoomPage();
+    if (route === "notifications") return renderNotificationsPage();
+    if (route === "settings") return renderSettingsPage();
+    if (route === "schema") return renderSchemaPage();
+    return renderManagerDashboard();
+}
+
+/* ---------------- SUPABASE HELPERS ---------------- */
+async function sbSelect(table, queryBuilder = q => q) {
+    const sb = ensureSupabaseClient();
+    const q = queryBuilder(sb.from(table).select("*"));
+    const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
+}
+async function sbMaybeSingle(table, builder) {
+    const sb = ensureSupabaseClient();
+    const q = builder(sb.from(table).select("*"));
+    const { data, error } = await q.maybeSingle();
+    if (error) throw error;
+    return data || null;
+}
+async function sbInsert(table, payload) {
+    const sb = ensureSupabaseClient();
+    const { error } = await sb.from(table).insert(payload);
+    if (error) throw error;
+}
+async function sbUpsert(table, payload) {
+    const sb = ensureSupabaseClient();
+    const { error } = await sb.from(table).upsert(payload);
+    if (error) throw error;
+}
+async function sbUpdate(table, payload, filterBuilder) {
+    const sb = ensureSupabaseClient();
+    const q = filterBuilder(sb.from(table).update(payload));
+    const { error } = await q;
+    if (error) throw error;
+}
+async function sbDelete(table, filterBuilder) {
+    const sb = ensureSupabaseClient();
+    const q = filterBuilder(sb.from(table).delete());
+    const { error } = await q;
+    if (error) throw error;
+}
+
+/* ---------------- DATA FETCH ---------------- */
+async function loadOwnedRooms() {
+    return await sbSelect("rooms", q => q.eq("owner_id", currentUser.id).order("created_at", { ascending: false }));
+}
+async function loadJoinedRooms() {
+    return await sbSelect("room_members", q => q.eq("user_id", currentUser.id));
+}
+async function loadAllJoinedRoomIds() {
+    const rows = await loadJoinedRooms();
+    return rows.map(row => row.room_id);
+}
+async function loadRoomsByIds(roomIds) {
+    if (!roomIds.length) return [];
+    return await sbSelect("rooms", q => q.in("id", roomIds).order("created_at", { ascending: false }));
+}
+async function loadMyAttendance() {
+    return await sbSelect("attendance", q => q.eq("user_id", currentUser.id).order("updated_at", { ascending: false }));
+}
+async function loadMyRequests() {
+    return await sbSelect("requests", q => q.eq("user_id", currentUser.id).order("created_at", { ascending: false }));
+}
+async function loadManagerRequests(roomIds) {
+    if (!roomIds.length) return [];
+    return await sbSelect("requests", q => q.in("room_id", roomIds).order("created_at", { ascending: false }));
+}
+async function loadNotifications() {
+    return await sbSelect("notifications", q => q.eq("user_id", currentUser.id).order("created_at", { ascending: false }));
+}
+async function loadProfilesByIds(ids) {
+    if (!ids.length) return [];
+    return await sbSelect("profiles", q => q.in("id", ids));
+}
+
+/* ---------------- DASHBOARDS ---------------- */
+async function renderManagerDashboard() {
+    const rooms = await loadOwnedRooms();
+    const roomIds = rooms.map(r => r.id);
+    const members = await sbSelect("room_members", q => roomIds.length ? q.in("room_id", roomIds) : q.eq("room_id", "__none__"));
+    const attendance = await sbSelect("attendance", q => roomIds.length ? q.in("room_id", roomIds) : q.eq("room_id", "__none__"));
+    const requests = await loadManagerRequests(roomIds);
+
+    const profileIds = [...new Set(members.map(m => m.user_id))];
+    const profiles = await loadProfilesByIds(profileIds);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+
+    const present = attendance.filter(a => a.status === "present").length;
+    const absent = attendance.filter(a => a.status === "absent").length;
+    const exempted = attendance.filter(a => a.status === "exempted").length;
+    const pending = requests.filter(r => r.status === "pending").length;
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Teacher / Boss Control Center</h1>
+                <p>Manage rooms, attendance, reports, and incoming absence requests.</p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="openQuickActions()">Quick Actions</button>
+                <button class="btn btn-primary" onclick="openCreateRoomModal()">+ Create Room</button>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi"><span class="kpi-icon">🏫</span><span class="kpi-label">ACTIVE ROOMS</span><span class="kpi-value">${rooms.filter(r => r.active).length}</span></div>
+            <div class="kpi"><span class="kpi-icon">👥</span><span class="kpi-label">TOTAL MEMBERS</span><span class="kpi-value">${profileIds.length}</span></div>
+            <div class="kpi"><span class="kpi-icon">✅</span><span class="kpi-label">PRESENT</span><span class="kpi-value">${present}</span></div>
+            <div class="kpi"><span class="kpi-icon">❌</span><span class="kpi-label">ABSENT</span><span class="kpi-value">${absent}</span></div>
+            <div class="kpi"><span class="kpi-icon">🟢</span><span class="kpi-label">EXEMPTED</span><span class="kpi-value">${exempted}</span></div>
+            <div class="kpi"><span class="kpi-icon">⏳</span><span class="kpi-label">PENDING</span><span class="kpi-value">${pending}</span></div>
+        </div>
+
+        <div class="grid-2">
+            <section class="card section">
+                <h2>Attendance Performance</h2>
+                <div class="small-muted">Overall completion rate across your rooms.</div>
+                <br>
+                ${progress(attendance.length ? Math.round((attendance.filter(a => a.status !== "not_marked").length / attendance.length) * 100) : 0)}
+                <div class="grid-3" style="margin-top:14px">
+                    <div class="good">Present<br><b>${present}</b></div>
+                    <div class="warn">Absent<br><b>${absent}</b></div>
+                    <div class="info">Exempted<br><b>${exempted}</b></div>
+                </div>
+            </section>
+
+            <section class="card section">
+                <h2>Recent Activity</h2>
+                <div class="timeline">
+                    ${renderRecentAudit(await loadRecentManagerAudit(roomIds))}
+                </div>
+            </section>
+        </div>
+
+        <section class="card section">
+            <h2>Your Rooms</h2>
+            ${rooms.length ? rooms.map(room => renderManagerRoomMini(room, attendance, requests, profileMap)).join("") : emptyState("🏫", "No rooms yet", "Create your first room to start.")}
+        </section>
+    `;
+}
+
+function renderUserDashboard() {
+    const joined = awaitLoadJoinedRoomsCache();
+    const reqs = awaitLoadRequestsCache();
+    const attendance = awaitLoadAttendanceCache();
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>${roleIcon(currentUser.role)} My Attendance Panel</h1>
+                <p>Join a room, mark attendance, and send absence reasons from one shared system.</p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="go('join')">Join Room</button>
+            </div>
+        </div>
+
+        <div class="grid-4">
+            ${statCard("Joined Rooms", joined.length, "Rooms you are in")}
+            ${statCard("Present", attendance.filter(x => x.status === "present").length, "Marked present")}
+            ${statCard("Pending", reqs.filter(x => x.status === "pending").length, "Waiting review")}
+            ${statCard("Exempted", reqs.filter(x => x.status === "approved").length, "Approved absences")}
+        </div>
+
+        <section class="card section">
+            <h2>My Joined Rooms</h2>
+            ${joined.length ? renderUserRoomList(joined, attendance, reqs) : emptyState("＋", "No joined rooms", "Use a room code to join.")}
+        </section>
+    `;
+}
+
+async function loadRecentManagerAudit(roomIds) {
+    if (!roomIds.length) return [];
+    const rows = await sbSelect("audit", q => q.in("room_id", roomIds).order("created_at", { ascending: false }).limit(10));
+    return rows;
+}
+
+function renderRecentAudit(rows) {
+    if (!rows.length) return `<div class="muted">No activity yet.</div>`;
+    return rows.map(row => `
+        <div class="event">
+            <b>${escapeHTML(row.action.replaceAll("_", " "))}</b>
+            <small>${escapeHTML(row.detail || "")} · ${fmt(row.created_at)}</small>
+        </div>
+    `).join("");
+}
+
+/* ---------------- RENDER HELPERS ---------------- */
+function renderManagerRoomMini(room, attendance, requests, profileMap) {
+    const memberCount = attendance.filter(a => a.room_id === room.id || a.roomId === room.id).length;
+    const completion = attendance.length ? Math.round((attendance.filter(a => a.room_id === room.id || a.roomId === room.id).filter(a => a.status !== "not_marked").length / Math.max(1, attendance.filter(a => a.room_id === room.id || a.roomId === room.id).length)) * 100) : 0;
+
+    return `
+        <div class="room">
+            <div>
+                <div class="room-name">${escapeHTML(room.name)}</div>
+                <div class="room-desc">${escapeHTML(room.description || "No description")} · ${room.active ? "Open" : "Closed"} · ${memberCount} record(s)</div>
+            </div>
+            <div class="room-actions">
+                <div class="room-code">${escapeHTML(room.code)}</div>
+                ${badge(room.active ? "Active" : "Closed")}
+                <button class="btn btn-secondary btn-sm" onclick="openRoom('${room.id}')">Manage</button>
+                <button class="btn btn-neutral btn-sm" onclick="copyRoomCode('${room.code}')">Copy</button>
+            </div>
+        </div>
+        <div style="margin:-2px 0 14px 0">${progress(completion)}</div>
+    `;
+}
+
+function renderUserRoomList(rooms, attendance, requests) {
+    return rooms.map(room => {
+        const att = attendance.find(a => a.room_id === room.id || a.roomId === room.id) || null;
+        const pending = requests.find(r => r.room_id === room.id || r.roomId === room.id);
+        const status = att ? formatStatus(att.status) : pending ? "Pending" : "Not Marked";
+        return `
+            <div class="room">
+                <div>
+                    <div class="room-name">${escapeHTML(room.name)}</div>
+                    <div class="room-desc">Room code: <b>${escapeHTML(room.code)}</b></div>
+                </div>
+                <div class="room-actions">
+                    ${badge(status)}
+                    <button class="btn btn-success btn-sm" onclick="markSelfPresent('${room.id}')">Present</button>
+                    <button class="btn btn-danger btn-sm" onclick="openAbsenceModal('${room.id}')">Absent</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/* ---------------- ROOMS ---------------- */
+function openCreateRoomModal() {
+    openModal("Create Room", `
+        <div class="notice">
+            A unique 6-digit room code is created automatically.
+            Share it with your class or workplace.
+        </div>
+        <div class="form-grid">
+            <div class="wide field">
+                <label>ROOM / CLASS / WORKPLACE NAME</label>
+                <input id="roomName" class="control" placeholder="Example: Grade 8 Section A" />
+            </div>
+            <div class="wide field">
+                <label>DESCRIPTION</label>
+                <textarea id="roomDesc" class="control" placeholder="Optional description"></textarea>
+            </div>
+            <div class="field">
+                <label>VISIBILITY</label>
+                <select id="roomVisibility" class="control">
+                    <option value="private">Code Required</option>
+                    <option value="open">Open</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>DEFAULT MARK</label>
+                <select id="roomDefault" class="control">
+                    <option value="not_marked">Not Marked</option>
+                    <option value="present">Present</option>
+                </select>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="createRoom()">Create Room</button>
+            <button class="btn btn-neutral" onclick="closeModal()">Cancel</button>
+        </div>
+    `);
+}
+
+async function createRoom() {
+    const name = $("#roomName").value.trim();
+    const description = $("#roomDesc").value.trim();
+    const visibility = $("#roomVisibility").value;
+    const defaultMark = $("#roomDefault").value;
+
+    if (name.length < 2) return toast("Enter a valid room name.");
+
+    const room = {
+        id: uid("room"),
+        owner_id: currentUser.id,
+        name,
+        description,
+        code: await uniqueRoomCode(),
+        active: true,
+        visibility,
+        default_mark: defaultMark,
+        created_at: now(),
+        updated_at: now()
+    };
+
+    const { error } = await sbInsert("rooms", room);
+    if (error) return toast(error.message);
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ROOM_CREATED",
+        detail: name,
+        created_at: now(),
+        room_id: room.id
+    });
+
+    closeModal();
+    toast(`Room created. Code: ${room.code}`);
+    go("rooms");
+}
+
+async function uniqueRoomCode() {
+    let code = "";
+    let exists = true;
+    while (exists) {
+        code = String(Math.floor(100000 + Math.random() * 900000));
+        const { data } = await sbSelect("rooms", q => q.eq("code", code).limit(1));
+        exists = data.length > 0;
+    }
+    return code;
+}
+
+async function renderRoomsPage() {
+    const rooms = await loadOwnedRooms();
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Room Management</h1>
+                <p>Create, close, reopen, and manage rooms.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateRoomModal()">+ Create Room</button>
+        </div>
+
+        <section class="card section">
+            ${rooms.length ? rooms.map(room => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">${escapeHTML(room.name)}</div>
+                        <div class="room-desc">${escapeHTML(room.description || "No description")}</div>
+                    </div>
+                    <div class="room-actions">
+                        <div class="room-code">${escapeHTML(room.code)}</div>
+                        ${badge(room.active ? "Active" : "Closed")}
+                        <button class="btn btn-secondary btn-sm" onclick="openRoom('${room.id}')">Manage</button>
+                        <button class="btn ${room.active ? "btn-danger" : "btn-success"} btn-sm" onclick="toggleRoom('${room.id}', ${room.active ? "false" : "true"})">${room.active ? "Close" : "Reopen"}</button>
+                    </div>
+                </div>
+            `).join("") : emptyState("🏫", "No rooms created", "Create your first room.")}
+        </section>
+    `;
+}
+
+async function toggleRoom(roomId, setActive) {
+    const { error } = await sbUpdate("rooms", { active: setActive, updated_at: now() }, q => q.eq("id", roomId));
+    if (error) return toast(error.message);
+    toast(setActive ? "Room reopened." : "Room closed.");
+    renderRoomsPage();
+}
+
+/* ---------------- ROOM DETAIL ---------------- */
+async function openRoom(roomId) {
+    activeRoomId = roomId;
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    if (!room) return toast("Room not found.");
+
+    const members = await sbSelect("room_members", q => q.eq("room_id", roomId));
+    const attendance = await sbSelect("attendance", q => q.eq("room_id", roomId).order("updated_at", { ascending: false }));
+    const requests = await sbSelect("requests", q => q.eq("room_id", roomId).order("created_at", { ascending: false }));
+    const memberIds = members.map(m => m.user_id);
+    const profiles = await loadProfilesByIds(memberIds);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>${escapeHTML(room.name)}</h1>
+                <p>${escapeHTML(room.description || "No description")} · Room code <b>${escapeHTML(room.code)}</b></p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="copyRoomCode('${room.code}')">Copy Code</button>
+                <button class="btn btn-neutral" onclick="go('rooms')">Back</button>
+            </div>
+        </div>
+
+        <div class="code-large">${escapeHTML(room.code)}</div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchRoomTab(this, 'roomMembersTab')">Members</button>
+            <button class="tab" onclick="switchRoomTab(this, 'roomAttendanceTab')">Attendance</button>
+            <button class="tab" onclick="switchRoomTab(this, 'roomRequestsTab')">Requests</button>
+            <button class="tab" onclick="switchRoomTab(this, 'roomSettingsTab')">Settings</button>
+        </div>
+
+        <div id="roomMembersTab">
+            <section class="card section">
+                <div class="page-head" style="margin-bottom:12px">
+                    <div>
+                        <h2>Members (${members.length})</h2>
+                        <div class="small-muted">All people who joined this room.</div>
+                    </div>
+                    <input id="memberSearch" class="control search" oninput="filterRoomMembers()" placeholder="Search members..." />
+                </div>
+
+                ${members.length ? `
+                    <div class="table-wrap">
+                        <table class="table" id="roomMemberTable">
+                            <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead>
+                            <tbody>
+                                ${members.map(m => {
+                                    const p = profileMap.get(m.user_id);
+                                    const att = attendance.find(a => a.user_id === m.user_id) || null;
+                                    const join = m.joined_at || m.created_at || now();
+                                    return `
+                                        <tr>
+                                            <td><b>${escapeHTML(p?.full_name || "Unknown")}</b></td>
+                                            <td>${escapeHTML(p?.username || "")}</td>
+                                            <td>${escapeHTML(roleLabel(p?.role || ""))}</td>
+                                            <td>${badge(att ? formatStatus(att.status) : "Not Marked")}</td>
+                                            <td>${fmt(join)}</td>
+                                            <td><button class="btn btn-danger btn-sm" onclick="removeMember('${room.id}','${m.user_id}')">Remove</button></td>
+                                        </tr>
+                                    `;
+                                }).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                ` : emptyState("♟", "No members yet", "Share the room code.")}
+            </section>
+        </div>
+
+        <div id="roomAttendanceTab" class="hidden">
+            <section class="card section">
+                ${renderBulkAttendance(room.id, attendance, members, profileMap)}
+            </section>
+        </div>
+
+        <div id="roomRequestsTab" class="hidden">
+            <section class="card section">
+                ${renderRequestTable(requests, profileMap)}
+            </section>
+        </div>
+
+        <div id="roomSettingsTab" class="hidden">
+            <section class="card section">
+                ${renderRoomSettings(room)}
+            </section>
+        </div>
+    `;
+}
+
+function switchRoomTab(btn, idName) {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    ["roomMembersTab","roomAttendanceTab","roomRequestsTab","roomSettingsTab"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("hidden", id !== idName);
+    });
+}
+
+function filterRoomMembers() {
+    const q = $("#memberSearch").value.toLowerCase();
+    document.querySelectorAll("#roomMemberTable tbody tr").forEach(tr => tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none");
+}
+
+async function copyRoomCode(code) {
+    try {
+        await navigator.clipboard.writeText(code);
+        toast("Room code copied!");
+    } catch {
+        toast(`Room code: ${code}`);
+    }
+}
+
+async function removeMember(roomId, accountId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    const profile = await sbMaybeSingle("profiles", q => q.eq("id", accountId));
+    if (!room) return;
+
+    if (!confirm(`Remove ${profile?.full_name || "this member"} from ${room.name}?`)) return;
+
+    const { error } = await sbDelete("room_members", q => q.eq("room_id", roomId).eq("user_id", accountId));
+    if (error) return toast(error.message);
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "MEMBER_REMOVED",
+        detail: `${profile?.full_name || "Member"} removed from ${room.name}`,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: accountId,
+        title: "Removed from room",
+        message: `You were removed from ${room.name}.`,
+        read: false,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    toast("Member removed.");
+    openRoom(roomId);
+}
+
+/* ---------------- JOIN ROOM ---------------- */
+async function renderJoinRoomPage() {
+    const membership = await loadJoinedRooms();
+    const roomIds = membership.map(m => m.room_id);
+    const joinedRooms = roomIds.length ? await loadRoomsByIds(roomIds) : [];
+    const openRooms = await sbSelect("rooms", q => q.eq("visibility", "open").eq("active", true).neq("owner_id", currentUser.id));
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Join a Room</h1>
+                <p>Enter a 6-digit code. Rooms are shared through Supabase, so different browsers can join the same class.</p>
+            </div>
+        </div>
+
+        <section class="card section">
+            <h2>Join Using Code</h2>
+            <div class="notice">
+                If the room exists in your shared database, joining it will work on every browser connected to the same Supabase project.
+            </div>
+
+            <div class="form-grid">
+                <div class="wide field">
+                    <label>6-DIGIT ROOM CODE</label>
+                    <input id="joinCode" class="control" maxlength="6" inputmode="numeric" placeholder="123456" />
+                </div>
+            </div>
+
+            <div id="joinErr" class="err"></div>
+            <button class="btn btn-primary" onclick="joinRoomByCode()">Join Room</button>
+        </section>
+
+        <section class="card section">
+            <h2>Open Rooms</h2>
+            ${openRooms.length ? openRooms.map(room => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">${escapeHTML(room.name)}</div>
+                        <div class="room-desc">${escapeHTML(room.description || "Open room")} · ${room.code}</div>
+                    </div>
+                    <div class="room-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="joinOpenRoom('${room.id}')">Join</button>
+                    </div>
+                </div>
+            `).join("") : emptyState("🔒", "No open rooms", "Ask your teacher or boss for a room code.")}
+        </section>
+
+        <section class="card section">
+            <h2>My Joined Rooms</h2>
+            ${joinedRooms.length ? joinedRooms.map(room => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">${escapeHTML(room.name)}</div>
+                        <div class="room-desc">Code: ${escapeHTML(room.code)}</div>
+                    </div>
+                    ${badge("Joined")}
+                </div>
+            `).join("") : emptyState("＋", "No joined rooms", "Use a room code above.")}
+        </section>
+    `;
+}
+
+async function joinRoomByCode() {
+    const code = $("#joinCode").value.trim();
+    const err = $("#joinErr");
+    err.textContent = "";
+
+    if (!/^\d{6}$/.test(code)) return err.textContent = "Enter exactly 6 digits.";
+
+    const room = await sbMaybeSingle("rooms", q => q.eq("code", code));
+    if (!room) return err.textContent = "Class not found. Check the code and try again.";
+    if (!room.active) return err.textContent = "This room is closed.";
+    if (room.owner_id === currentUser.id) return err.textContent = "You cannot join your own room.";
+
+    const already = await sbMaybeSingle("room_members", q => q.eq("room_id", room.id).eq("user_id", currentUser.id));
+    if (already) return err.textContent = "You already joined this room.";
+
+    await sbInsert("room_members", {
+        id: uid("member"),
+        room_id: room.id,
+        user_id: currentUser.id,
+        joined_at: now()
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ROOM_JOINED",
+        detail: `${currentUser.full_name} joined ${room.name}`,
+        created_at: now(),
+        room_id: room.id
+    });
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: room.owner_id,
+        title: "New member joined",
+        message: `${currentUser.full_name} successfully joined ${room.name}.`,
+        read: false,
+        created_at: now(),
+        room_id: room.id
+    });
+
+    toast(`Joined ${room.name} successfully.`);
+    renderJoinRoomPage();
+}
+
+async function joinOpenRoom(roomId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    if (!room) return;
+    if (room.owner_id === currentUser.id) return toast("You cannot join your own room.");
+
+    const exists = await sbMaybeSingle("room_members", q => q.eq("room_id", room.id).eq("user_id", currentUser.id));
+    if (exists) return toast("You already joined this room.");
+
+    await sbInsert("room_members", {
+        id: uid("member"),
+        room_id: room.id,
+        user_id: currentUser.id,
+        joined_at: now()
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ROOM_JOINED",
+        detail: `${currentUser.full_name} joined ${room.name}`,
+        created_at: now(),
+        room_id: room.id
+    });
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: room.owner_id,
+        title: "New member joined",
+        message: `${currentUser.full_name} successfully joined ${room.name}.`,
+        read: false,
+        created_at: now(),
+        room_id: room.id
+    });
+
+    toast(`Joined ${room.name} successfully.`);
+    renderJoinRoomPage();
+}
+
+/* ---------------- ATTENDANCE ---------------- */
+async function markSelfPresent(roomId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    if (!room) return;
+
+    const existing = await sbMaybeSingle("attendance", q => q.eq("room_id", roomId).eq("user_id", currentUser.id));
+    if (existing) {
+        await sbUpdate("attendance", { status: "present", updated_at: now(), source: "self" }, q => q.eq("id", existing.id));
+    } else {
+        await sbInsert("attendance", {
+            id: uid("att"),
+            room_id: roomId,
+            user_id: currentUser.id,
+            status: "present",
+            reason: null,
+            created_at: now(),
+            updated_at: now(),
+            source: "self"
+        });
+    }
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "SELF_ATTENDANCE",
+        detail: `${room.name}: Present`,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    toast("Attendance saved as Present.");
+    renderUserDashboard();
+}
+
+async function openAbsenceModal(roomId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    openModal("Submit Absence Reason", `
+        <div class="warn">
+            Your request goes to the teacher/boss. Approved = Exempted. Declined = Absent.
+        </div>
+
+        <div class="form-grid">
+            <div class="wide field">
+                <label>ROOM</label>
+                <input class="control" value="${escapeHTML(room?.name || "")}" disabled />
+            </div>
+
+            <div class="wide field">
+                <label>REASON FOR ABSENCE</label>
+                <textarea id="absReason" class="control" placeholder="Write a clear reason..."></textarea>
+            </div>
+        </div>
+
+        <div id="absErr" class="err"></div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="submitAbsence('${roomId}')">Send Request</button>
+            <button class="btn btn-neutral" onclick="closeModal()">Cancel</button>
+        </div>
+    `);
+}
+
+async function submitAbsence(roomId) {
+    const reason = $("#absReason").value.trim();
+    const err = $("#absErr");
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+
+    err.textContent = "";
+
+    if (reason.length < 5) return err.textContent = "Please provide a more detailed reason.";
+    if (!room) return err.textContent = "Room not found.";
+
+    const pending = await sbMaybeSingle("requests", q => q.eq("room_id", roomId).eq("user_id", currentUser.id).eq("status", "pending"));
+    if (pending) return err.textContent = "You already have a pending request.";
+
+    const request = {
+        id: uid("req"),
+        room_id: roomId,
+        user_id: currentUser.id,
+        reason,
+        status: "pending",
+        created_at: now(),
+        decided_at: null
+    };
+
+    await sbInsert("requests", request);
+
+    const att = await sbMaybeSingle("attendance", q => q.eq("room_id", roomId).eq("user_id", currentUser.id));
+    if (att) {
+        await sbUpdate("attendance", { status: "pending", reason, updated_at: now(), source: "request" }, q => q.eq("id", att.id));
+    } else {
+        await sbInsert("attendance", {
+            id: uid("att"),
+            room_id: roomId,
+            user_id: currentUser.id,
+            status: "pending",
+            reason,
+            created_at: now(),
+            updated_at: now(),
+            source: "request"
+        });
+    }
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: room.owner_id,
+        title: "New absence request",
+        message: `${currentUser.full_name} submitted an absence request for ${room.name}.`,
+        read: false,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ABSENCE_REQUEST_SENT",
+        detail: `${room.name}: ${reason}`,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    closeModal();
+    toast("Absence request sent.");
+    renderUserDashboard();
+}
+
+/* ---------------- REQUESTS ---------------- */
+function renderRequestTable(requests, profileMap) {
+    if (!requests.length) return emptyState("✓", "No absence requests", "Requests from your rooms appear here.");
+
+    return `
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Room</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${requests.map(req => {
+                        const profile = profileMap.get(req.user_id) || profileMap.get(req.userId);
+                        const r = roomFromMap(req.room_id || req.roomId);
+                        const status = req.status === "pending" ? "Pending" : req.status === "approved" ? "Exempted" : "Absent";
+                        return `
+                            <tr>
+                                <td><b>${escapeHTML(profile?.full_name || "Unknown")}</b><br><span class="muted">${escapeHTML(profile?.username || "")}</span></td>
+                                <td>${escapeHTML(r?.name || "Unknown")}</td>
+                                <td style="max-width:260px">${escapeHTML(req.reason)}</td>
+                                <td>${badge(status)}</td>
+                                <td>${fmt(req.created_at || req.createdAt)}</td>
+                                <td>
+                                    ${req.status === "pending" ? `
+                                        <div class="actions">
+                                            <button class="btn btn-success btn-sm" onclick="decideRequest('${req.id}','approved')">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="decideRequest('${req.id}','declined')">Decline</button>
+                                        </div>
+                                    ` : fmt(req.decided_at || req.decidedAt)}
+                                </td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+async function renderManagerRequests() {
+    const rooms = await loadOwnedRooms();
+    const roomIds = rooms.map(r => r.id);
+    const requests = roomIds.length ? await sbSelect("requests", q => q.in("room_id", roomIds).order("created_at", { ascending: false })) : [];
+    const ids = [...new Set(requests.map(r => r.user_id))];
+    const profiles = await loadProfilesByIds(ids);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Request Center</h1>
+                <p>Approve or decline absence requests from your rooms.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${renderRequestTable(requests, profileMap)}
+        </section>
+    `;
+}
+
+async function renderMyRequests() {
+    const requests = await loadMyRequests();
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>My Requests</h1>
+                <p>Track your absence request history.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${requests.length ? `
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Reason</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th>Decision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${requests.map(req => `
+                                <tr>
+                                    <td>${escapeHTML(roomFromMap(req.room_id || req.roomId)?.name || "Unknown")}</td>
+                                    <td>${escapeHTML(req.reason)}</td>
+                                    <td>${fmt(req.created_at || req.createdAt)}</td>
+                                    <td>${badge(req.status === "pending" ? "Pending" : req.status === "approved" ? "Exempted" : "Absent")}</td>
+                                    <td>${fmt(req.decided_at || req.decidedAt)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("!", "No requests", "Your absence requests appear here.")}
+        </section>
+    `;
+}
+
+async function decideRequest(requestId, decision) {
+    const req = await sbMaybeSingle("requests", q => q.eq("id", requestId));
+    if (!req || req.status !== "pending") return;
+
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", req.room_id));
+    const finalStatus = decision === "approved" ? "approved" : "declined";
+    const attendanceStatus = finalStatus === "approved" ? "exempted" : "absent";
+
+    await sbUpdate("requests", {
+        status: finalStatus,
+        decided_at: now()
+    }, q => q.eq("id", requestId));
+
+    const attendance = await sbMaybeSingle("attendance", q => q.eq("room_id", req.room_id).eq("user_id", req.user_id));
+    if (attendance) {
+        await sbUpdate("attendance", {
+            status: attendanceStatus,
+            updated_at: now(),
+            source: "manager_request"
+        }, q => q.eq("id", attendance.id));
+    } else {
+        await sbInsert("attendance", {
+            id: uid("att"),
+            room_id: req.room_id,
+            user_id: req.user_id,
+            status: attendanceStatus,
+            reason: req.reason,
+            created_at: now(),
+            updated_at: now(),
+            source: "manager_request"
+        });
+    }
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: req.user_id,
+        title: "Absence Request Decision",
+        message: `${room?.name || "Room"}: your request was ${finalStatus === "approved" ? "approved and marked Exempted" : "declined and marked Absent"}.`,
+        read: false,
+        created_at: now(),
+        room_id: req.room_id
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "REQUEST_DECIDED",
+        detail: `${room?.name || "Room"} → ${finalStatus}`,
+        created_at: now(),
+        room_id: req.room_id
+    });
+
+    toast(`Request updated: ${finalStatus === "approved" ? "Exempted" : "Absent"}.`);
+    renderManagerRequests();
+}
+
+/* ---------------- ATTENDANCE ---------------- */
+async function renderManagerAttendance() {
+    const rooms = await loadOwnedRooms();
+    const roomIds = rooms.map(r => r.id);
+    const attendance = roomIds.length ? await sbSelect("attendance", q => q.in("room_id", roomIds).order("updated_at", { ascending: false })) : [];
+    const roomMembers = roomIds.length ? await sbSelect("room_members", q => q.in("room_id", roomIds)) : [];
+    const profiles = await loadProfilesByIds([...new Set(roomMembers.map(m => m.user_id))]);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+
+    const rows = roomMembers.map(m => {
+        const room = rooms.find(r => r.id === m.room_id);
+        const profile = profileMap.get(m.user_id);
+        const att = attendance.find(a => a.room_id === m.room_id && a.user_id === m.user_id);
+        return {
+            room,
+            memberId: m.user_id,
+            profile,
+            att
+        };
+    });
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Attendance Control</h1>
+                <p>Update attendance across all rooms.</p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="go('reports')">Open Reports</button>
+            </div>
+        </div>
+
+        <section class="card section">
+            ${rows.length ? `
+                <div class="filters">
+                    <input id="attSearch" class="control search" oninput="filterAttendance()" placeholder="Search name, username, or room..." />
+                    <select id="attRoomFilter" class="control" onchange="filterAttendance()">
+                        <option value="">All rooms</option>
+                        ${rooms.map(r => `<option value="${r.id}">${escapeHTML(r.name)}</option>`).join("")}
+                    </select>
+                    <select id="attStatusFilter" class="control" onchange="filterAttendance()">
+                        <option value="">All statuses</option>
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="exempted">Exempted</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_marked">Not Marked</option>
+                    </select>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table" id="attTable">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Person</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Updated</th>
+                                <th>Quick Set</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(row => `
+                                <tr data-room="${row.room.id}" data-status="${slugStatus(row.att?.status || "Not Marked")}">
+                                    <td>${escapeHTML(row.room.name)}</td>
+                                    <td><b>${escapeHTML(row.profile?.full_name || "Unknown")}</b><br><span class="muted">${escapeHTML(row.profile?.username || "")}</span></td>
+                                    <td>${escapeHTML(roleLabel(row.profile?.role || ""))}</td>
+                                    <td>${badge(row.att ? formatStatus(row.att.status) : "Not Marked")}</td>
+                                    <td>${fmt(row.att?.updated_at || row.att?.updatedAt)}</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-success btn-sm" onclick="setManagerAttendance('${row.room.id}','${row.memberId}','present')">P</button>
+                                            <button class="btn btn-danger btn-sm" onclick="setManagerAttendance('${row.room.id}','${row.memberId}','absent')">A</button>
+                                            <button class="btn btn-warning btn-sm" onclick="setManagerAttendance('${row.room.id}','${row.memberId}','exempted')">E</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("✓", "No attendance data", "Members will appear after they join rooms.")}
+        </section>
+    `;
+}
+
+function filterAttendance() {
+    const q = $("#attSearch").value.toLowerCase();
+    const roomId = $("#attRoomFilter").value;
+    const status = $("#attStatusFilter").value;
+    document.querySelectorAll("#attTable tbody tr").forEach(tr => {
+        const okQ = tr.textContent.toLowerCase().includes(q);
+        const okR = !roomId || tr.dataset.room === roomId;
+        const okS = !status || tr.dataset.status === status;
+        tr.style.display = okQ && okR && okS ? "" : "none";
+    });
+}
+
+async function setManagerAttendance(roomId, userId, status) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    const profile = await sbMaybeSingle("profiles", q => q.eq("id", userId));
+    if (!room || !profile) return;
+
+    const att = await sbMaybeSingle("attendance", q => q.eq("room_id", roomId).eq("user_id", userId));
+    if (att) {
+        await sbUpdate("attendance", { status, updated_at: now(), source: "manager" }, q => q.eq("id", att.id));
+    } else {
+        await sbInsert("attendance", {
+            id: uid("att"),
+            room_id: roomId,
+            user_id: userId,
+            status,
+            created_at: now(),
+            updated_at: now(),
+            source: "manager"
+        });
+    }
+
+    await sbInsert("notifications", {
+        id: uid("note"),
+        user_id: userId,
+        title: "Attendance Updated",
+        message: `${room.name}: you were marked ${formatStatus(status)}.`,
+        read: false,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ATTENDANCE_SET",
+        detail: `${profile.full_name} in ${room.name} → ${status}`,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    toast(`Updated ${profile.full_name} to ${formatStatus(status)}.`);
+    openRoom(roomId);
+}
+
+async function renderBulkAttendance(roomId, attendance, members, profileMap) {
+    return `
+        <div class="page-head" style="margin-bottom:12px">
+            <div>
+                <h2>Bulk Attendance</h2>
+                <div class="small-muted">Mark members quickly.</div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-success btn-sm" onclick="bulkSet('${roomId}','present')">Mark All Present</button>
+                <button class="btn btn-danger btn-sm" onclick="bulkSet('${roomId}','absent')">Mark All Absent</button>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr><th>Name</th><th>Status</th><th>P</th><th>A</th><th>E</th></tr>
+                </thead>
+                <tbody>
+                    ${members.map(m => {
+                        const p = profileMap.get(m.user_id);
+                        const att = attendance.find(a => a.user_id === m.user_id);
+                        return `
+                            <tr>
+                                <td><b>${escapeHTML(p?.full_name || "Unknown")}</b></td>
+                                <td>${badge(att ? formatStatus(att.status) : "Not Marked")}</td>
+                                <td><button class="btn btn-success btn-sm" onclick="setManagerAttendance('${roomId}','${m.user_id}','present')">✓</button></td>
+                                <td><button class="btn btn-danger btn-sm" onclick="setManagerAttendance('${roomId}','${m.user_id}','absent')">✕</button></td>
+                                <td><button class="btn btn-warning btn-sm" onclick="setManagerAttendance('${roomId}','${m.user_id}','exempted')">E</button></td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+async function bulkSet(roomId, status) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    const members = await sbSelect("room_members", q => q.eq("room_id", roomId));
+    if (!room || !members.length) return toast("No members in this room.");
+    if (!confirm(`Mark all ${members.length} members as ${formatStatus(status)}?`)) return;
+
+    for (const m of members) {
+        const att = await sbMaybeSingle("attendance", q => q.eq("room_id", roomId).eq("user_id", m.user_id));
+        if (att) {
+            await sbUpdate("attendance", { status, updated_at: now(), source: "bulk" }, q => q.eq("id", att.id));
+        } else {
+            await sbInsert("attendance", {
+                id: uid("att"),
+                room_id: roomId,
+                user_id: m.user_id,
+                status,
+                created_at: now(),
+                updated_at: now(),
+                source: "bulk"
+            });
+        }
+
+        await sbInsert("notifications", {
+            id: uid("note"),
+            user_id: m.user_id,
+            title: "Bulk Attendance Update",
+            message: `${room.name}: your attendance was marked ${formatStatus(status)}.`,
+            read: false,
+            created_at: now(),
+            room_id: roomId
+        });
+    }
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "BULK_ATTENDANCE",
+        detail: `${room.name}: ${status}`,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    toast("Bulk attendance completed.");
+    openRoom(roomId);
+}
+
+async function renderMyAttendance() {
+    const rows = await loadMyAttendance();
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>My Attendance History</h1>
+                <p>Your saved attendance records across joined rooms.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${rows.length ? `
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead><tr><th>Room</th><th>Status</th><th>Last Updated</th></tr></thead>
+                        <tbody>
+                            ${rows.map(r => `<tr><td>${escapeHTML(roomFromMap(r.room_id || r.roomId)?.name || "Unknown")}</td><td>${badge(formatStatus(r.status))}</td><td>${fmt(r.updated_at || r.updatedAt)}</td></tr>`).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("✓", "No attendance records", "Join a room first.")}
+        </section>
+    `;
+}
+
+/* ---------------- REPORTS ---------------- */
+function roomFromMap(roomId) {
+    return roomsCache.get(roomId) || null;
+}
+
+let roomsCache = new Map();
+
+async function refreshRoomsCache() {
+    const allRooms = await sbSelect("rooms", q => q.order("created_at", { ascending: false }));
+    roomsCache = new Map(allRooms.map(r => [r.id, r]));
+    return allRooms;
+}
+
+async function reportRows() {
+    const rooms = await loadOwnedRooms();
+    const roomIds = rooms.map(r => r.id);
+    const members = roomIds.length ? await sbSelect("room_members", q => q.in("room_id", roomIds)) : [];
+    const attendance = roomIds.length ? await sbSelect("attendance", q => q.in("room_id", roomIds)) : [];
+    const ids = [...new Set(members.map(m => m.user_id))];
+    const profiles = await loadProfilesByIds(ids);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+    const roomMap = new Map(rooms.map(r => [r.id, r]));
+
+    const rows = members.map(m => {
+        const p = profileMap.get(m.user_id);
+        const att = attendance.find(a => a.room_id === m.room_id && a.user_id === m.user_id);
+        return {
+            roomId: m.room_id,
+            room: roomMap.get(m.room_id)?.name || "Unknown",
+            accountId: m.user_id,
+            name: p?.full_name || "Unknown",
+            username: p?.username || "",
+            role: p?.role || "",
+            status: att ? formatStatus(att.status) : "Not Marked"
+        };
+    });
+
+    return rows;
+}
+
+async function renderReportsPage() {
+    const rows = await reportRows();
+    const rooms = await loadOwnedRooms();
+    const saved = await sbSelect("reports", q => q.eq("owner_id", currentUser.id).order("created_at", { ascending: false }));
+
+    const present = rows.filter(x => x.status === "Present").length;
+    const absent = rows.filter(x => x.status === "Absent").length;
+    const exempted = rows.filter(x => x.status === "Exempted").length;
+    const pending = rows.filter(x => x.status === "Pending").length;
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Analytics & Reports</h1>
+                <p>Generate persistent reports, inspect trends, and export CSV.</p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+                <button class="btn btn-primary" onclick="saveSnapshot()">Save Snapshot</button>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi"><span class="kpi-icon">📋</span><span class="kpi-label">TOTAL ROWS</span><span class="kpi-value">${rows.length}</span></div>
+            <div class="kpi"><span class="kpi-icon">✅</span><span class="kpi-label">PRESENT</span><span class="kpi-value">${present}</span></div>
+            <div class="kpi"><span class="kpi-icon">❌</span><span class="kpi-label">ABSENT</span><span class="kpi-value">${absent}</span></div>
+            <div class="kpi"><span class="kpi-icon">🟢</span><span class="kpi-label">EXEMPTED</span><span class="kpi-value">${exempted}</span></div>
+            <div class="kpi"><span class="kpi-icon">⏳</span><span class="kpi-label">PENDING</span><span class="kpi-value">${pending}</span></div>
+            <div class="kpi"><span class="kpi-icon">📈</span><span class="kpi-label">COMPLETION</span><span class="kpi-value">${rows.length ? Math.round(((present + exempted) / rows.length) * 100) : 0}%</span></div>
+        </div>
+
+        <div class="grid-2">
+            <section class="card section">
+                <h2>Attendance Trend</h2>
+                <div class="small-muted">This chart is a lightweight visual of recent report activity.</div>
+                <div style="margin-top:14px">${renderSimpleBarChart(saved)}</div>
+            </section>
+
+            <section class="card section">
+                <h2>Room Performance</h2>
+                <div class="stat-row"><span>Present rate</span><strong>${rows.length ? Math.round((present / rows.length) * 100) : 0}%</strong></div>
+                ${progress(rows.length ? Math.round((present / rows.length) * 100) : 0)}
+                <div class="stat-row"><span>Marked records</span><strong>${rows.filter(x => x.status !== "Not Marked").length}</strong></div>
+                <div class="stat-row"><span>Unmarked records</span><strong>${rows.filter(x => x.status === "Not Marked").length}</strong></div>
+                <div class="stat-row"><span>Exempted rate</span><strong>${rows.length ? Math.round((exempted / rows.length) * 100) : 0}%</strong></div>
+            </section>
+        </div>
+
+        <section class="card section">
+            <h2>Current Report</h2>
+            <div class="filters">
+                <input id="repSearch" class="control search" oninput="filterReports()" placeholder="Search by room, name, username, or role..." />
+                <select id="repRoomFilter" class="control" onchange="filterReports()">
+                    <option value="">All rooms</option>
+                    ${rooms.map(r => `<option value="${r.id}">${escapeHTML(r.name)}</option>`).join("")}
+                </select>
+                <select id="repStatusFilter" class="control" onchange="filterReports()">
+                    <option value="">All statuses</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Exempted">Exempted</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Not Marked">Not Marked</option>
+                </select>
+            </div>
+
+            ${rows.length ? `
+                <div class="table-wrap">
+                    <table class="table" id="reportTable">
+                        <thead><tr><th>Room</th><th>Person</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+                        <tbody>
+                            ${rows.map(r => `
+                                <tr data-room="${r.roomId}" data-status="${slugStatus(r.status)}">
+                                    <td>${escapeHTML(r.room)}</td>
+                                    <td>${escapeHTML(r.name)}</td>
+                                    <td>${escapeHTML(r.username)}</td>
+                                    <td>${escapeHTML(roleLabel(r.role))}</td>
+                                    <td>${badge(r.status)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("▤", "No report data", "Members must join rooms first.")}
+        </section>
+
+        <section class="card section">
+            <h2>Saved Report Snapshots</h2>
+            ${saved.length ? saved.map(report => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">Snapshot</div>
+                        <div class="room-desc">Saved ${fmt(report.created_at)} · ${report.rows?.length || 0} row(s)</div>
+                    </div>
+                    <div class="room-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="viewSnapshot('${report.id}')">View</button>
+                    </div>
+                </div>
+            `).join("") : emptyState("▤", "No saved reports", "Save a snapshot to preserve history.")}
+        </section>
+    `;
+}
+
+function renderSimpleBarChart(savedReports = []) {
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dayKey = date.toISOString().slice(0, 10);
+        days.push({
+            label: date.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+            count: savedReports.filter(r => String(r.created_at || "").startsWith(dayKey)).length
+        });
+    }
+    const max = Math.max(...days.map(d => d.count), 1);
+    return `
+        <div class="grid-4" style="gap:8px;align-items:end;height:220px">
+            ${days.map(day => `
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:200px">
+                    <div style="width:100%;height:${Math.max(10,(day.count/max)*150)}px;background:linear-gradient(180deg,var(--primary),var(--success));border-radius:10px 10px 3px 3px;position:relative">
+                        <span style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:900">${day.count}</span>
+                    </div>
+                    <div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:center">${day.label}</div>
+                </div>
+            `).join("")}
+        </div>
+    `;
+}
+
+function filterReports() {
+    const q = ($("#repSearch").value || "").toLowerCase();
+    const roomId = $("#repRoomFilter").value || "";
+    const status = $("#repStatusFilter").value || "";
+    document.querySelectorAll("#reportTable tbody tr").forEach(tr => {
+        const okQ = tr.textContent.toLowerCase().includes(q);
+        const okR = !roomId || tr.dataset.room === roomId;
+        const okS = !status || tr.dataset.status === slugStatus(status);
+        tr.style.display = okQ && okR && okS ? "" : "none";
+    });
+}
+
+async function filteredRows() {
+    const q = ($("#repSearch")?.value || "").toLowerCase();
+    const roomId = ($("#repRoomFilter")?.value || "");
+    const status = ($("#repStatusFilter")?.value || "");
+    const rows = await reportRows();
+    return rows.filter(r => {
+        const okQ = `${r.room} ${r.name} ${r.username} ${r.role}`.toLowerCase().includes(q);
+        const okR = !roomId || r.roomId === roomId;
+        const okS = !status || r.status === status;
+        return okQ && okR && okS;
+    });
+}
+
+async function saveSnapshot() {
+    const rows = await filteredRows();
+    if (!rows.length) return toast("No rows match the current filters.");
+
+    await sbInsert("reports", {
+        id: uid("report"),
+        owner_id: currentUser.id,
+        created_at: now(),
+        rows
+    });
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "REPORT_SAVED",
+        detail: `${rows.length} rows saved`,
+        created_at: now()
+    });
+
+    toast("Report snapshot saved.");
+    renderReportsPage();
+}
+
+async function exportCSV() {
+    const rows = await filteredRows();
+    if (!rows.length) return toast("No rows to export.");
+
+    const csv = [
+        ["Room","Full Name","Username","Role","Status"],
+        ...rows.map(r => [r.room, r.name, r.username, roleLabel(r.role), r.status])
+    ].map(line => line.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `JEMCODES_Report_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "REPORT_EXPORTED",
+        detail: `${rows.length} rows exported`,
+        created_at: now()
+    });
+
+    toast("CSV exported.");
+}
+
+async function viewSnapshot(reportId) {
+    try {
+        const report = await sbMaybeSingle("reports", q => q.eq("id", reportId).eq("owner_id", currentUser.id));
+        if (!report) return toast("Saved report not found.");
+
+        openModal("Saved Report Snapshot", `
+            <div class="small-muted">Saved ${fmt(report.created_at)} · ${report.rows?.length || 0} rows</div>
+            <div class="table-wrap" style="margin-top:12px">
+                <table class="table">
+                    <thead><tr><th>Room</th><th>Name</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+                    <tbody>
+                        ${(report.rows || []).map(r => `
+                            <tr>
+                                <td>${escapeHTML(r.room)}</td>
+                                <td>${escapeHTML(r.name)}</td>
+                                <td>${escapeHTML(r.username)}</td>
+                                <td>${escapeHTML(roleLabel(r.role))}</td>
+                                <td>${badge(r.status)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `);
+    } catch (err) {
+        toast(err?.message || "Could not load that report.");
+    }
+}
+
+/* ---------------- NOTIFICATIONS ---------------- */
+async function renderNotificationsPage() {
+    const rows = await loadNotifications();
+    await Promise.all(rows.map(async row => {
+        if (!row.read) await sbUpdate("notifications", { read: true }, q => q.eq("id", row.id));
+    }));
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Notifications</h1>
+                <p>Room joins, attendance updates, and request decisions.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${rows.length ? rows.map(n => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">${escapeHTML(n.title)}</div>
+                        <div class="room-desc">${escapeHTML(n.message)}</div>
+                    </div>
+                    <div class="small-muted nowrap">${fmt(n.created_at)}</div>
+                </div>
+            `).join("") : emptyState("●", "No notifications", "New updates appear here.")}
+        </section>
+    `;
+}
+
+/* ---------------- SETTINGS / SECURITY / BACKUP ---------------- */
+function renderSettingsPage() {
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Settings</h1>
+                <p>Manage app connection, profile, and local backup tools.</p>
+            </div>
+        </div>
+
+        <section class="card section">
+            <div class="actions" style="align-items:center">
+                <div class="avatar-lg">${escapeHTML(initials(currentUser.full_name))}</div>
+                <div>
+                    <h2 style="margin:0">${escapeHTML(currentUser.full_name)}</h2>
+                    <div class="muted">@${escapeHTML(currentUser.username)} · ${escapeHTML(roleLabel(currentUser.role))}</div>
+                </div>
+            </div>
+
+            <hr class="sep">
+
+            <h2>Supabase Connection</h2>
+            <div class="notice warn">
+                Paste your Supabase Project URL and anon key here.
+                Supabase uses a Postgres database, Auth, realtime, and storage on its platform, and the JavaScript client is created with <code>createClient</code>. citeturn269071search1turn269071search4turn269071search5
+            </div>
+
+            <div class="form-grid" style="margin-top:12px">
+                <div class="wide field">
+                    <label>SUPABASE PROJECT URL</label>
+                    <input id="sbUrl" class="control" value="${escapeHTML(localSettings.supabaseUrl)}" readonly />
+                </div>
+                <div class="wide field">
+                    <label>SUPABASE ANON KEY</label>
+                    <input id="sbKey" class="control" value="${escapeHTML(localSettings.supabaseAnonKey)}" placeholder="your anon key" />
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="saveConnection()">Save Connection</button>
+                <button class="btn btn-secondary" onclick="testConnection()">Test Connection</button>
+            </div>
+        </section>
+
+        <section class="card section">
+            <h2>Profile</h2>
+            <div class="form-grid">
+                <div class="wide field">
+                    <label>FULL NAME</label>
+                    <input id="profileName" class="control" value="${escapeHTML(currentUser.full_name)}" />
+                </div>
+                <div class="field">
+                    <label>USERNAME</label>
+                    <input class="control" value="${escapeHTML(currentUser.username)}" disabled />
+                </div>
+                <div class="field">
+                    <label>ROLE</label>
+                    <input class="control" value="${escapeHTML(roleLabel(currentUser.role))}" disabled />
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+            </div>
+        </section>
+
+        <section class="card section">
+            <h2>Local Tools</h2>
+            <div class="info">
+                This app stores only your Supabase connection locally.
+                Rooms, accounts, and attendance should live in the shared backend so GitHub Pages users can see the same class data.
+            </div>
+            <div class="actions" style="margin-top:12px">
+                <button class="btn btn-secondary" onclick="backupData()">Export Backup</button>
+                <button class="btn btn-danger" onclick="clearConnection()">Clear Local Connection</button>
+            </div>
+        </section>
+    `;
+}
+
+function renderSecurityPage() {
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Account & Security</h1>
+                <p>Change your password and review account details.</p>
+            </div>
+        </div>
+
+        <section class="card section">
+            <div class="actions" style="align-items:center">
+                <div class="avatar-lg">${escapeHTML(initials(currentUser.full_name))}</div>
+                <div>
+                    <h2 style="margin:0">${escapeHTML(currentUser.full_name)}</h2>
+                    <div class="muted">@${escapeHTML(currentUser.username)} · ${escapeHTML(roleLabel(currentUser.role))}</div>
+                </div>
+            </div>
+
+            <hr class="sep">
+
+            <h2>Change Password</h2>
+            <div class="form-grid">
+                <div class="field"><label>NEW PASSWORD</label><input id="newPassword" class="control" type="password" /></div>
+                <div class="field"><label>CONFIRM PASSWORD</label><input id="confirmPassword" class="control" type="password" /></div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+            </div>
+        </section>
+
+        <section class="card section">
+            <div class="warn">
+                Password changes are handled through Supabase Auth. Use this only after your connection is working and your auth tables are configured.
+            </div>
+        </section>
+    `;
+}
+
+function renderBackupPage() {
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Backup</h1>
+                <p>Export or restore your local app settings. The shared database remains in Supabase.</p>
+            </div>
+        </div>
+
+        <section class="card section">
+            <h2>Export</h2>
+            <div class="actions" style="margin-top:12px">
+                <button class="btn btn-secondary" onclick="backupData()">Export Local Settings</button>
+            </div>
+        </section>
+
+        <section class="card section">
+            <h2>Restore</h2>
+            <div class="file-drop">
+                <div class="small-muted">Choose a backup file made by JEMCODES settings export.</div>
+                <div class="field" style="margin-top:12px">
+                    <label>BACKUP FILE</label>
+                    <input id="restoreFile" type="file" class="control" accept="application/json" />
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="restoreBackup()">Restore Backup</button>
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+/* ---------------- PROFILE / CONNECTION ---------------- */
+function saveConnection() {
+    localSettings.supabaseUrl = JEMCODES_SUPABASE_URL;
+    localSettings.supabaseAnonKey = JEMCODES_SUPABASE_PUBLISHABLE_KEY;
+    saveLocalSettings();
+    supabaseClient = null;
+    ensureSupabaseClient();
+    toast("Supabase connection saved.");
+}
+
+async function testConnection() {
+    const sb = ensureSupabaseClient();
+    if (!sb) {
+        toast("Add a Supabase URL and anon key first.");
+        return;
+    }
+    const { data, error } = await sb.from("profiles").select("id").limit(1);
+    if (error) {
+        toast(error.message);
+        return;
+    }
+    toast("Connection works.");
+}
+
+async function saveProfile() {
+    const name = $("#profileName").value.trim();
+    if (name.length < 2) return toast("Full name cannot be empty.");
+
+    const { error } = await sbUpdate("profiles", {
+        full_name: name,
+        updated_at: now()
+    }, q => q.eq("id", currentUser.id));
+
+    if (error) return toast(error.message);
+    currentUser.full_name = name;
+    toast("Profile updated.");
+    renderApp();
+}
+
+async function changePassword() {
+    const newPassword = $("#newPassword").value;
+    const confirmPassword = $("#confirmPassword").value;
+    if (newPassword.length < 6) return toast("Password must be at least 6 characters.");
+    if (newPassword !== confirmPassword) return toast("Passwords do not match.");
+
+    const sb = ensureSupabaseClient();
+    if (!sb) return toast("JEMCODES cloud is configured automatically.");
+
+    const { error } = await sb.auth.updateUser({ password: newPassword });
+    if (error) return toast(error.message);
+
+    toast("Password updated.");
+}
+
+function backupData() {
+    const payload = {
+        app: "JEMCODES",
+        exportedAt: now(),
+        localSettings,
+        ui: { authMode }
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `JEMCODES_Local_Settings_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("Backup exported.");
+}
+
+function clearConnection() {
+    if (!confirm("Clear the saved Supabase connection from this browser?")) return;
+    localSettings = structuredClone(DEFAULT_SETTINGS);
+    saveLocalSettings();
+    supabaseClient = null;
+    toast("Local connection cleared.");
+    renderSettingsPage();
+}
+
+async function restoreBackup() {
+    const file = $("#restoreFile").files[0];
+    if (!file) return toast("Choose a backup file first.");
+
+    const text = await file.text();
+    try {
+        const parsed = JSON.parse(text);
+        if (!parsed.localSettings) throw new Error("Invalid backup");
+        localSettings = { ...structuredClone(DEFAULT_SETTINGS), ...parsed.localSettings };
+        saveLocalSettings();
+        toast("Backup restored.");
+        renderSettingsPage();
+    } catch {
+        toast("Could not restore that file.");
+    }
+}
+
+/* ---------------- MEMBER DIRECTORY ---------------- */
+async function renderMembersPage() {
+    const rooms = await loadOwnedRooms();
+    const roomIds = rooms.map(r => r.id);
+    const members = roomIds.length ? await sbSelect("room_members", q => q.in("room_id", roomIds).order("joined_at", { ascending: false })) : [];
+    const ids = [...new Set(members.map(m => m.user_id))];
+    const profiles = await loadProfilesByIds(ids);
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Member Directory</h1>
+                <p>All students and workers who joined your rooms.</p>
+            </div>
+            <input id="memberFilter" class="control search" oninput="filterMembers()" placeholder="Search members..." />
+        </div>
+
+        <section class="card section">
+            ${members.length ? `
+                <div class="table-wrap">
+                    <table id="memberTable" class="table">
+                        <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Room</th><th>Joined</th></tr></thead>
+                        <tbody>
+                            ${members.map(m => {
+                                const p = profileMap.get(m.user_id);
+                                const room = rooms.find(r => r.id === m.room_id);
+                                return `
+                                    <tr>
+                                        <td><b>${escapeHTML(p?.full_name || "Unknown")}</b></td>
+                                        <td>${escapeHTML(p?.username || "")}</td>
+                                        <td>${escapeHTML(roleLabel(p?.role || ""))}</td>
+                                        <td>${escapeHTML(room?.name || "Unknown")}</td>
+                                        <td>${fmt(m.joined_at)}</td>
+                                    </tr>
+                                `;
+                            }).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("♟", "No members", "Members appear after they join rooms.")}
+        </section>
+    `;
+}
+
+function filterMembers() {
+    const q = $("#memberFilter").value.toLowerCase();
+    document.querySelectorAll("#memberTable tbody tr").forEach(tr => tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none");
+}
+
+/* ---------------- REQUESTS / NOTIFICATIONS ---------------- */
+async function renderNotificationsPage() {
+    const rows = await loadNotifications();
+    for (const row of rows) {
+        if (!row.read) {
+            await sbUpdate("notifications", { read: true }, q => q.eq("id", row.id));
+        }
+    }
+
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Notifications</h1>
+                <p>Room joins, attendance updates, and request decisions.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${rows.length ? rows.map(n => `
+                <div class="room">
+                    <div>
+                        <div class="room-name">${escapeHTML(n.title)}</div>
+                        <div class="room-desc">${escapeHTML(n.message)}</div>
+                    </div>
+                    <div class="small-muted nowrap">${fmt(n.created_at)}</div>
+                </div>
+            `).join("") : emptyState("●", "No notifications", "New updates appear here.")}
+        </section>
+    `;
+}
+
+async function renderMyRequests() {
+    const requests = await loadMyRequests();
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>My Requests</h1>
+                <p>Track your absence request history.</p>
+            </div>
+        </div>
+        <section class="card section">
+            ${requests.length ? `
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead><tr><th>Room</th><th>Reason</th><th>Submitted</th><th>Status</th><th>Decision</th></tr></thead>
+                        <tbody>
+                            ${requests.map(req => `
+                                <tr>
+                                    <td>${escapeHTML(roomFromMap(req.room_id || req.roomId)?.name || "Unknown")}</td>
+                                    <td>${escapeHTML(req.reason)}</td>
+                                    <td>${fmt(req.created_at || req.createdAt)}</td>
+                                    <td>${badge(req.status === "pending" ? "Pending" : req.status === "approved" ? "Exempted" : "Absent")}</td>
+                                    <td>${fmt(req.decided_at || req.decidedAt)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            ` : emptyState("!", "No requests", "Your absence requests appear here.")}
+        </section>
+    `;
+}
+
+/* ---------------- ROOM SETTINGS ---------------- */
+function renderRoomSettings(room) {
+    return `
+        <h2>Room Settings</h2>
+        <div class="form-grid">
+            <div class="wide field">
+                <label>ROOM NAME</label>
+                <input id="setRoomName" class="control" value="${escapeHTML(room.name)}" />
+            </div>
+
+            <div class="wide field">
+                <label>DESCRIPTION</label>
+                <textarea id="setRoomDesc" class="control">${escapeHTML(room.description || "")}</textarea>
+            </div>
+
+            <div class="field">
+                <label>STATUS</label>
+                <select id="setRoomActive" class="control">
+                    <option value="true" ${room.active ? "selected" : ""}>Open</option>
+                    <option value="false" ${!room.active ? "selected" : ""}>Closed</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>VISIBILITY</label>
+                <select id="setRoomVisibility" class="control">
+                    <option value="private" ${room.visibility !== "open" ? "selected" : ""}>Code Required</option>
+                    <option value="open" ${room.visibility === "open" ? "selected" : ""}>Open</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="saveRoomSettings('${room.id}')">Save Room Settings</button>
+            <button class="btn btn-secondary" onclick="copyRoomCode('${room.code}')">Copy Code</button>
+            <button class="btn btn-danger" onclick="deleteRoom('${room.id}')">Delete Room</button>
+        </div>
+    `;
+}
+
+async function saveRoomSettings(roomId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    if (!room) return;
+
+    const patch = {
+        name: $("#setRoomName").value.trim(),
+        description: $("#setRoomDesc").value.trim(),
+        active: $("#setRoomActive").value === "true",
+        visibility: $("#setRoomVisibility").value,
+        updated_at: now()
+    };
+
+    const { error } = await sbUpdate("rooms", patch, q => q.eq("id", roomId));
+    if (error) return toast(error.message);
+
+    await sbInsert("audit", {
+        id: uid("audit"),
+        user_id: currentUser.id,
+        action: "ROOM_UPDATED",
+        detail: patch.name,
+        created_at: now(),
+        room_id: roomId
+    });
+
+    toast("Room settings saved.");
+    openRoom(roomId);
+}
+
+async function deleteRoom(roomId) {
+    const room = await sbMaybeSingle("rooms", q => q.eq("id", roomId));
+    if (!room) return;
+
+    if (!confirm(`Delete "${room.name}"? This cannot be undone.`)) return;
+
+    await sbDelete("room_members", q => q.eq("room_id", roomId));
+    await sbDelete("attendance", q => q.eq("room_id", roomId));
+    await sbDelete("requests", q => q.eq("room_id", roomId));
+    await sbDelete("notifications", q => q.eq("room_id", roomId));
+    await sbDelete("audit", q => q.eq("room_id", roomId));
+    const { error } = await sbDelete("rooms", q => q.eq("id", roomId));
+    if (error) return toast(error.message);
+
+    toast("Room deleted.");
+    go("rooms");
+}
+
+/* ---------------- QUICK ACTIONS ---------------- */
+function openQuickActions() {
+    openModal("Quick Actions", `
+        <div class="grid-3">
+            <button class="btn btn-primary full" onclick="closeModal();openCreateRoomModal()">＋ Create Room</button>
+            <button class="btn btn-secondary full" onclick="closeModal();go('attendance')">✓ Attendance</button>
+            <button class="btn btn-warning full" onclick="closeModal();go('requests')">! Requests</button>
+            <button class="btn btn-secondary full" onclick="closeModal();go('reports')">▤ Reports</button>
+            <button class="btn btn-secondary full" onclick="closeModal();go('members')">♟ Members</button>
+            <button class="btn btn-neutral full" onclick="closeModal();go('settings')">⚙ Settings</button>
+        </div>
+    `);
+}
+
+/* ---------------- RELOAD HELPERS ---------------- */
+async function bootstrap() {
+    authMode = loadUiMode();
+    localSettings = loadLocalSettings();
+    ensureSupabaseClient();
+
+    const { session: s, user: u } = await getSessionAndUser();
+    session = s;
+    currentUser = u ? await loadCurrentProfile(u.id) : null;
+
+    if (!currentUser) {
+        renderAuth();
+        return;
+    }
+
+    renderApp();
+    startRealtime();
+}
+
+async function renderManagerAttendanceFallback() {
+    return renderManagerAttendance();
+}
+
+function renderRecentRoomEvents() {
+    return "";
+}
+
+function renderSchemaPage() {
+    document.getElementById("main").innerHTML = `
+        <div class="page-head">
+            <div>
+                <h1>Database Setup</h1>
+                <p>Use this page to remind yourself what tables JEMCODES needs in Supabase.</p>
+            </div>
+        </div>
+        <section class="card section">
+            <div class="notice warn">
+                Your GitHub Pages site needs a shared backend to make class codes work across browsers. Supabase provides the database and Auth layer for that shared storage. citeturn269071search1turn269071search5
+            </div>
+
+            <h2>Required tables</h2>
+            <pre style="white-space:pre-wrap;background:#0f182b;border:1px solid var(--line);padding:16px;border-radius:14px;overflow:auto;color:#dbe4ff">profiles, rooms, room_members, attendance, requests, reports, notifications, audit</pre>
+
+            <h2>Needed columns</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th>Table</th><th>Main fields</th></tr></thead>
+                    <tbody>
+                        <tr><td>profiles</td><td>id, email, full_name, username, role, updated_at</td></tr>
+                        <tr><td>rooms</td><td>id, owner_id, name, description, code, active, visibility, default_mark, created_at, updated_at</td></tr>
+                        <tr><td>room_members</td><td>id, room_id, user_id, joined_at</td></tr>
+                        <tr><td>attendance</td><td>id, room_id, user_id, status, reason, source, created_at, updated_at</td></tr>
+                        <tr><td>requests</td><td>id, room_id, user_id, reason, status, created_at, decided_at</td></tr>
+                        <tr><td>reports</td><td>id, owner_id, created_at, rows</td></tr>
+                        <tr><td>notifications</td><td>id, user_id, title, message, read, created_at, room_id</td></tr>
+                        <tr><td>audit</td><td>id, user_id, action, detail, created_at, room_id</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    `;
+}
+
+/* ---------------- START ---------------- */
+window.addEventListener("beforeunload", () => {
+    stopRealtime();
+});
+
+bootstrap();
+</script>
+</body>
+</html>
